@@ -9,7 +9,7 @@ class Shader
 {
 private:
     // For Debug Purposes
-    const char *m_Filepath;
+    const std::string m_Filepath;
 
     unsigned int m_RendererID;
 

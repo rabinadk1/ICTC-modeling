@@ -58,13 +58,7 @@ uint Shader::CompileShader(const uint type, const std::string &source) const
 
     if (!result)
     {
-        int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char *infoLog = static_cast<char *>(alloca(length * sizeof(char)));
-
-        glGetShaderInfoLog(id, length, nullptr, infoLog);
-        std::cerr << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragement") << " shader" << std::endl;
-        std::cerr << infoLog << std::endl;
+        std::cerr << "ERROR:Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragement") << " shader" << std::endl;
         glDeleteShader(id);
         return 0;
     }
