@@ -65,10 +65,11 @@ int main()
     }
 
     const float positions[] = {
-        -0.5f, -0.5f,
-        0.5f, -0.5f,
-        0.5f, 0.5f,
-        -0.5f, 0.5f};
+        // positions         // colors
+        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.25f, 0.f};
 
     const uint indices[] = {
         0, 1, 2,
@@ -82,13 +83,16 @@ int main()
 
     // Specifying Layout
     VertexBufferLayout layout;
+    // For vertex position
     layout.Push<float>(2);
+    // For color
+    layout.Push<float>(3);
     va.AddBuffer(vb, layout);
 
     //Element Buffer Object or Index Buffer Object
     IndexBuffer ib(indices, 6);
 
-    Shader shader("res/shaders/basic.glsl");
+    Shader shader("res/shaders/vertexColor.glsl");
     shader.Bind();
 
     /*
@@ -100,7 +104,7 @@ int main()
     ib.Unbind();
     shader.Unbind();
 
-    float r = 0.f, increment = 0.05f;
+    // float r = 0.f, increment = 0.05f;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -110,15 +114,17 @@ int main()
         Renderer::Clear();
 
         shader.Bind();
-        shader.SetUnifrom4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+        // shader.SetUnifrom4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
         Renderer::Draw(va, ib, shader);
 
+        /*
         if (r > 1.0f)
             increment = -0.05f;
         else if (r < 0.0f)
             increment = 0.05f;
         r += increment;
+        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

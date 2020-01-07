@@ -9,6 +9,7 @@
 struct VertexBufferElement
 {
     unsigned int type;
+    // Number of floats defining the position
     unsigned int count;
     /*
     GL_TRUE is 1 and
