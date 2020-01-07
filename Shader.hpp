@@ -1,0 +1,46 @@
+#pragma once
+
+#include <string>
+#include <unordered_map>
+
+#include <GL/glew.h>
+
+class Shader
+{
+private:
+    // For Debug Purposes
+    const char *m_Filepath;
+
+    unsigned int m_RendererID;
+
+    std::unordered_map<const char *, int> m_UniformLocationCache;
+
+public:
+    Shader(const char *filepath);
+    ~Shader() { glDeleteProgram(m_RendererID); }
+
+    inline void Bind() const { glUseProgram(m_RendererID); }
+    inline void Unbind() const { glUseProgram(0); }
+
+    // Set uniform of given name
+    inline void SetUnifrom4f(const char *name, float v0, float v1, float v2, float v3)
+    {
+        glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
+    }
+
+private:
+    /*
+    Parses the file in **filepath** and return source code of
+    vertex shader and fragment shader as pair
+    */
+    std::pair<std::string, std::string> ParseShader(const char *filepath) const;
+
+    // Compiles shaders from the source code
+    uint CompileShader(const uint type, const std::string &source) const;
+
+    // Compiles both shaders and return a program containing both
+    uint CreateShader(const std::string &vertexShader, const std::string &fragmentShader) const;
+
+    // Gets the location of provided uniform
+    int GetUniformLocation(const char *name);
+};
