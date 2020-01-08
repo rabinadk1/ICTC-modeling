@@ -3,7 +3,8 @@
 *
 !*.*
 
-# Track Makefile and LICENSE
+# Track Directories, Makefile and LICENSE
+!*/
 !Makefile
 !LICENSE
 
