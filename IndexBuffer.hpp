@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/glew.h>
+
 class IndexBuffer
 {
 private:
@@ -8,10 +10,10 @@ private:
 
 public:
     IndexBuffer(const unsigned int *data, const unsigned int count);
-    ~IndexBuffer();
+    ~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 
-    void Bind() const;
-    void Unbind() const;
+    inline void Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID); }
+    inline void Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); };
 
     inline unsigned int GetCount() const { return m_Count; }
 };

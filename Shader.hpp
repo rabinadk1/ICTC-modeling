@@ -23,7 +23,12 @@ public:
     inline void Unbind() const { glUseProgram(0); }
 
     // Set uniform of given name
-    inline void SetUnifrom4f(const char *name, float v0, float v1, float v2, float v3)
+    inline void SetUniform(const char *name, int value)
+    {
+        glUniform1i(GetUniformLocation(name), value);
+    }
+
+    inline void SetUniform(const char *name, float v0, float v1, float v2, float v3)
     {
         glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
     }

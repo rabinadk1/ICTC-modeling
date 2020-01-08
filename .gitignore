@@ -3,6 +3,10 @@
 *
 !*.*
 
+# Track Makefile and LICENSE
+!Makefile
+!LICENSE
+
 # Prerequisites
 *.d
 

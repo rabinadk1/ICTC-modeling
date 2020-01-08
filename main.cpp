@@ -11,6 +11,7 @@
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
+#include "Texture.hpp"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -64,12 +65,19 @@ int main()
         // glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
     }
 
+    // const float positions[] = {
+    //     // positions         // colors
+    //     -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+    //     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+    //     0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+    //     -0.5f, 0.5f, 0.5f, 0.25f, 0.f};
+
     const float positions[] = {
-        // positions         // colors
-        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.25f, 0.f};
+        // positions   // texture Coords
+        -0.5f, -0.5f, 0.f, 0.f,
+        0.5f, -0.5f, 1.f, 0.f,
+        0.5f, 0.5f, 1.f, 1.f,
+        -0.5f, 0.5f, 0.f, 1.f};
 
     const uint indices[] = {
         0, 1, 2,
@@ -85,15 +93,22 @@ int main()
     VertexBufferLayout layout;
     // For vertex position
     layout.Push<float>(2);
+    //For texture
+    layout.Push<float>(2);
     // For color
-    layout.Push<float>(3);
+    // layout.Push<float>(3);
     va.AddBuffer(vb, layout);
 
     //Element Buffer Object or Index Buffer Object
     IndexBuffer ib(indices, 6);
 
-    Shader shader("res/shaders/vertexColor.glsl");
+    Shader shader("res/shaders/renderTexture.glsl");
     shader.Bind();
+
+    Texture texture("res/images/chernoLogo.jpg");
+    texture.Bind();
+    // Set the uniform u_Texture to the one bound above
+    shader.SetUniform("u_Texture", 0);
 
     /*
     Unbinded to bind another object Latero on
@@ -114,7 +129,7 @@ int main()
         Renderer::Clear();
 
         shader.Bind();
-        // shader.SetUnifrom4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+        // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
         Renderer::Draw(va, ib, shader);
 
