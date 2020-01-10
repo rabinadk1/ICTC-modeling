@@ -19,11 +19,11 @@ Texture::Texture(const char *path)
   load and generate the texture
   NOTE: Last argument to force the number of channels, **0 to not force**
   */
-
-  unsigned char *m_LocalBuffer = stbi_load(path, &m_Width, &m_Height, &m_ChannelNumber, 0);
+  stbi_set_flip_vertically_on_load(true);
+  unsigned char *m_LocalBuffer = stbi_load(path, &m_Width, &m_Height, &m_ChannelNumber, 4);
   if (m_LocalBuffer)
   {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_LocalBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(m_LocalBuffer);
   }

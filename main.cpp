@@ -83,6 +83,10 @@ int main()
         0, 1, 2,
         2, 3, 0};
 
+    //For blending, i.e. for textures with RGBA values
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Vertext Array Object
     VertexArray va;
 
@@ -105,7 +109,7 @@ int main()
     Shader shader("res/shaders/renderTexture.glsl");
     shader.Bind();
 
-    Texture texture("res/images/chernoLogo.jpg");
+    Texture texture("res/images/eagleSports.png");
     texture.Bind();
     // Set the uniform u_Texture to the one bound above
     shader.SetUniform("u_Texture", 0);
