@@ -36,6 +36,7 @@ int main()
     GLFWwindow *window = glfwCreateWindow(1072, 804, "Hello World", nullptr, nullptr);
     if (!window)
     {
+        std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -67,19 +68,55 @@ int main()
         // glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
     }
 
-    // const float positions[] = {
-    //     // positions         // colors
-    //     -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-    //     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-    //     0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-    //     -0.5f, 0.5f, 0.5f, 0.25f, 0.f};
-
     const float positions[] = {
-        // positions   // texture Coords
-        -0.5f, -0.5f, 0.f, 0.f,
-        0.5f, -0.5f, 1.f, 0.f,
-        0.5f, 0.5f, 1.f, 1.f,
-        -0.5f, 0.5f, 0.f, 1.f};
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
+
+    // const float positions[] = {
+    //     // positions   // texture Coords
+    //     -0.5f, -0.5f, 0.f, 0.f,
+    //     0.5f, -0.5f, 1.f, 0.f,
+    //     0.5f, 0.5f, 1.f, 1.f,
+    //     -0.5f, 0.5f, 0.f, 1.f};
 
     const uint indices[] = {
         0, 1, 2,
@@ -88,6 +125,9 @@ int main()
     //For blending, i.e. for textures with RGBA values
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //enabling depth_test sense depth using z-buffer
+    glEnable(GL_DEPTH_TEST);
 
     // Vertext Array Object
     VertexArray va;
@@ -98,7 +138,7 @@ int main()
     // Specifying Layout
     VertexBufferLayout layout;
     // For vertex position
-    layout.Push<float>(2);
+    layout.Push<float>(3);
     //For texture
     layout.Push<float>(2);
     // For color
@@ -106,9 +146,9 @@ int main()
     va.AddBuffer(vb, layout);
 
     //Element Buffer Object or Index Buffer Object
-    IndexBuffer ib(indices, 6);
+    // IndexBuffer ib(indices, 6);
 
-    glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
+    // glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
 
     Shader shader("res/shaders/renderTexture.glsl");
     shader.Bind();
@@ -117,7 +157,7 @@ int main()
     texture.Bind();
     // Set the uniform u_Texture to the one bound above
     shader.SetUniform("u_Texture", 0);
-    shader.SetUniform("u_MVP", proj);
+    // shader.SetUniform("u_MVP", proj);
 
     /*
     Unbinded to bind another object Latero on
@@ -125,7 +165,7 @@ int main()
     */
     va.Unbind();
     vb.Unbind();
-    ib.Unbind();
+    // ib.Unbind();
     shader.Unbind();
 
     // float r = 0.f, increment = 0.05f;
@@ -135,13 +175,24 @@ int main()
     {
         processInput(window);
 
-        Renderer::Clear();
+        Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.Bind();
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        Renderer::Draw(va, ib, shader);
+        glm::mat4 model = glm::rotate(glm::mat4(1.f), static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.f, 0.f));
+        glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -3.f));
 
+        int w_width, w_height;
+        glfwGetWindowSize(window, &w_width, &w_height);
+        glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(w_width) / w_height, 0.1f, 100.f);
+
+        shader.SetUniform("u_model", model);
+        shader.SetUniform("u_view", view);
+        shader.SetUniform("u_projection", projection);
+
+        // Renderer::Draw(va, ib);
+        Renderer::Draw(va, 36);
         /*
         if (r > 1.0f)
             increment = -0.05f;

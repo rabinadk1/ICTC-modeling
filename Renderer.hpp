@@ -5,11 +5,11 @@
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
-
 struct Renderer
 {
-    static inline void Clear() { glClear(GL_COLOR_BUFFER_BIT); }
-    static void Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader);
+    static inline void Clear(uint clearBit = GL_COLOR_BUFFER_BIT) { glClear(clearBit); }
+    static void Draw(const VertexArray &va, const IndexBuffer &ib);
+    static void Draw(const VertexArray &va, uint vertexCount);
 };
 
 // Callback function for printing debug statements
