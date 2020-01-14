@@ -4,15 +4,15 @@ layout (location = 0) in vec4 position;
 layout (location = 1) in vec2 aTexCord;
 
 out vec2 TexCord;
-uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
 
 
 void main()
 {
     // gl_Position = position;
-   gl_Position = u_projection*u_view*u_model*position;
+   gl_Position = u_Projection*u_View*u_Model*position;
    TexCord = aTexCord;
 };
 

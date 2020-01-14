@@ -118,9 +118,21 @@ int main()
     //     0.5f, 0.5f, 1.f, 1.f,
     //     -0.5f, 0.5f, 0.f, 1.f};
 
-    const uint indices[] = {
-        0, 1, 2,
-        2, 3, 0};
+    // const uint indices[] = {
+    //     0, 1, 2,
+    //     2, 3, 0};
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     //For blending, i.e. for textures with RGBA values
     glEnable(GL_BLEND);
@@ -159,6 +171,9 @@ int main()
     shader.SetUniform("u_Texture", 0);
     // shader.SetUniform("u_MVP", proj);
 
+    glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -3.f));
+    shader.SetUniform("u_View", view);
+
     /*
     Unbinded to bind another object Latero on
     TODO: Remove later on and don't Unbind **anything**
@@ -180,19 +195,22 @@ int main()
         shader.Bind();
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 model = glm::rotate(glm::mat4(1.f), static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.f, 0.f));
-        glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -3.f));
+        // glm::mat4 model = glm::rotate(glm::mat4(1.f), static_cast<float>(glfwGetTime()), glm::vec3(0.5f, 1.f, 0.f));
+        // shader.SetUniform("u_model", model);
 
         int w_width, w_height;
         glfwGetWindowSize(window, &w_width, &w_height);
         glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(w_width) / w_height, 0.1f, 100.f);
-
-        shader.SetUniform("u_model", model);
-        shader.SetUniform("u_view", view);
-        shader.SetUniform("u_projection", projection);
+        shader.SetUniform("u_Projection", projection);
 
         // Renderer::Draw(va, ib);
-        Renderer::Draw(va, 36);
+        for (int i = 0; i < 10; ++i)
+        {
+            glm::mat4 model = glm::translate(glm::mat4(1.f), cubePositions[i]);
+            model = glm::rotate(model, static_cast<float>(glfwGetTime()) + glm::radians(20.f * i), glm::vec3(1.f, 0.3f, 0.5f));
+            shader.SetUniform("u_Model", model);
+            Renderer::Draw(va, 36);
+        }
         /*
         if (r > 1.0f)
             increment = -0.05f;
