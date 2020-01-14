@@ -5,6 +5,8 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
@@ -31,7 +33,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow *window = glfwCreateWindow(640, 640, "Hello World", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(1072, 804, "Hello World", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
@@ -106,6 +108,8 @@ int main()
     //Element Buffer Object or Index Buffer Object
     IndexBuffer ib(indices, 6);
 
+    glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
+
     Shader shader("res/shaders/renderTexture.glsl");
     shader.Bind();
 
@@ -113,10 +117,11 @@ int main()
     texture.Bind();
     // Set the uniform u_Texture to the one bound above
     shader.SetUniform("u_Texture", 0);
+    shader.SetUniform("u_MVP", proj);
 
     /*
     Unbinded to bind another object Latero on
-    TODO: Remove later on and don;t Unbind **anything**
+    TODO: Remove later on and don't Unbind **anything**
     */
     va.Unbind();
     vb.Unbind();

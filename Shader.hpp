@@ -4,7 +4,8 @@
 #include <unordered_map>
 
 #include <GL/glew.h>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 class Shader
 {
 private:
@@ -26,6 +27,11 @@ public:
     inline void SetUniform(const char *name, int value)
     {
         glUniform1i(GetUniformLocation(name), value);
+    }
+
+    inline void SetUniform(const char *name, const glm::mat4 &matrix)
+    {
+        glUniformMatrix4fv(GetUniformLocation(name), 1, false, glm::value_ptr(matrix));
     }
 
     inline void SetUniform(const char *name, float v0, float v1, float v2, float v3)
