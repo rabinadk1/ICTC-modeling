@@ -2,19 +2,32 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
 
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
+#include "Camera.hpp"
+
 struct Renderer
 {
-    static float yaw, pitch;      // for rotation using mouse
-    static float fov;             // for zooming in and out from mouse wheel
     static int w_width, w_height; // The size of window of glfw
+    static Camera camera;         // Camera for rendering
 
     static inline void Clear(uint clearBit = GL_COLOR_BUFFER_BIT) { glClear(clearBit); }
-    static void Draw(const VertexArray &va, const IndexBuffer &ib);
-    static void Draw(const VertexArray &va, uint vertexCount);
+    static void Draw(const VertexArray &va, const IndexBuffer &ib)
+    {
+        va.Bind();
+        ib.Bind();
+
+        glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+    }
+
+    static void Draw(const VertexArray &va, uint vertexCount)
+    {
+        va.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    }
 };
 
 // Callback function for printing debug statements
@@ -32,6 +45,11 @@ inline void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     Renderer::w_height = height;
 }
 
+// glfw: whenever mouse wheel is scrolled this function is executed
+inline void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+    Renderer::camera.ProcessMouseScroll(yoffset);
+}
+
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window, glm::vec3 &cameraPos, const glm::vec3 &cameraFront, const glm::vec3 &cameraUp);
+void processInput(GLFWwindow *window);

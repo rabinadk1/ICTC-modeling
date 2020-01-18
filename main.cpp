@@ -14,6 +14,7 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+#include "Camera.hpp"
 
 int main()
 {
@@ -186,45 +187,29 @@ int main()
     // ib.Unbind();
     shader.Unbind();
 
-    glm::vec3 cameraPos(0.f, 0.f, 3.f), cameraFront, direction;
-    const glm::vec3 cameraUp(0.f, 1.f, 0.f);
-
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        direction.x = cos(glm::radians(Renderer::yaw)) * cos(glm::radians(Renderer::pitch));
-        direction.y = sin(glm::radians(Renderer::pitch));
-        direction.z = sin(glm::radians(Renderer::yaw)) * cos(glm::radians(Renderer::pitch));
-        cameraFront = glm::normalize(direction);
-
-        processInput(window, cameraPos, cameraFront, cameraUp);
+        processInput(window);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.Bind();
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        shader.SetUniform("u_View", view);
+        shader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
 
-        glm::mat4 projection = glm::perspective(glm::radians(Renderer::fov), static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
+        glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()), static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         shader.SetUniform("u_Projection", projection);
 
         // Renderer::Draw(va, ib);
-        for (int i = 0; i < 10; ++i)
+        for (uint i = 0; i < 10; ++i)
         {
             glm::mat4 model = glm::translate(glm::mat4(1.f), cubePositions[i]);
             model = glm::rotate(model, static_cast<float>(glfwGetTime()) + glm::radians(20.f * i), glm::vec3(1.f, 0.3f, 0.5f));
             shader.SetUniform("u_Model", model);
             Renderer::Draw(va, 36);
         }
-        /*
-        if (r > 1.0f)
-            increment = -0.05f;
-        else if (r < 0.0f)
-            increment = 0.05f;
-        r += increment;
-        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

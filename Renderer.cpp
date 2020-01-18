@@ -1,29 +1,11 @@
 #include "Renderer.hpp"
 
-// Changed by mouse movement
-float Renderer::yaw = -90.f;
-float Renderer::pitch = 0.f;
-
-// Change by mouse scrolling
-float Renderer::fov = 45.f;
-
 // Changed by resizing
 int Renderer::w_width = 1072;
 int Renderer::w_height = 804;
 
-void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib)
-{
-    va.Bind();
-    ib.Bind();
-
-    glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
-}
-
-void Renderer::Draw(const VertexArray &va, uint vertexCount)
-{
-    va.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-}
+// Camera
+Camera Renderer::camera = Camera(glm::vec3(0.f, 0.f, 3.0f));
 
 // Callback function for printing debug statements
 void GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
@@ -120,33 +102,15 @@ void GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
     static float lastX = xpos, lastY = ypos;
-    const float sensitivity = 0.05f;
 
-    const float xoffset = (static_cast<float>(xpos) - lastX) * sensitivity;
-    const float yoffset = (lastY - static_cast<float>(ypos)) * sensitivity; // reversed since y-coordinates range from bottom to top
+    // reversed yoffset since y-coordinates range from bottom to top
+    Renderer::camera.ProcessMouseMovement(xpos - lastX, lastY - ypos);
+
     lastX = xpos;
     lastY = ypos;
-
-    Renderer::yaw += xoffset;
-    Renderer::pitch += yoffset;
-
-    if (Renderer::pitch > 89.f)
-        Renderer::pitch = 89.f;
-    else if (Renderer::pitch < -89.f)
-        Renderer::pitch = -89.f;
 }
 
-// glfw: whenever mouse wheel is scrolled this function is executed
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
-{
-    Renderer::fov -= yoffset;
-    if (Renderer::fov < 1.f)
-        Renderer::fov = 1.f;
-    else if (Renderer::fov > 45.f)
-        Renderer::fov = 45.f;
-}
-
-void processInput(GLFWwindow *window, glm::vec3 &cameraPos, const glm::vec3 &cameraFront, const glm::vec3 &cameraUp)
+void processInput(GLFWwindow *window)
 {
     // NOTE: The static variable initializes only once
     static float lastFrame = glfwGetTime(); // Time of last frame
@@ -159,17 +123,16 @@ void processInput(GLFWwindow *window, glm::vec3 &cameraPos, const glm::vec3 &cam
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    const float cameraSpeed = 2.5f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        Renderer::camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        Renderer::camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        Renderer::camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        Renderer::camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraUp * cameraSpeed;
+        Renderer::camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraUp * cameraSpeed;
+        Renderer::camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 }

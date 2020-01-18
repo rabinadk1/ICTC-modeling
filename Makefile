@@ -4,14 +4,14 @@ CFLAGS = -Wall -Weffc++
 HEADERS = VertexArray.hpp VertexBuffer.hpp \
 VertexBufferLayout.hpp IndexBuffer.hpp \
 Shader.hpp Renderer.hpp Texture.hpp \
-stb_image.h
+Camera.hpp stb_image.h
 
 LINKALL = -lGLEW -lglfw -lGL -lX11 -ldl
 LINKTARGET = main
 OBJS =  IndexBuffer.o VertexBuffer.o \
 VertexArray.o Shader.o \
 Renderer.o Texture.o\
-stb_image.o main.o
+Camera.o stb_image.o main.o
 
 all: $(LINKTARGET)
 
@@ -30,6 +30,7 @@ VertexBuffer.o: VertexBuffer.hpp
 Shader.o: Shader.hpp
 Renderer.o: Renderer.hpp
 Texture.o: Texture.hpp
+Camera.o: Camera.hpp
 stb_image.o: stb_image.h
 
 main.o: $(HEADERS)
