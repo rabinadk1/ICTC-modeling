@@ -15,9 +15,6 @@
 #include "Renderer.hpp"
 #include "Texture.hpp"
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void processInput(GLFWwindow *window, glm::vec3 &cameraPos, const glm::vec3 &cameraFront, const glm::vec3 &cameraUp);
-
 int main()
 {
     /* Initialize the library */
@@ -41,11 +38,20 @@ int main()
         return -1;
     }
 
+    // hide the cursor and capture it.
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
     // Sets framebuffersize of the current window
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // Gets mouse postion when mouse moves
+    glfwSetCursorPosCallback(window, mouse_callback);
+
+    //Gets scroll offset when scrolling mouse wheel
+    glfwSetScrollCallback(window, scroll_callback);
 
     // For Vsync
     glfwSwapInterval(1);
@@ -180,12 +186,17 @@ int main()
     // ib.Unbind();
     shader.Unbind();
 
-    glm::vec3 cameraPos(0.f, 0.f, 3.f);
-    const glm::vec3 cameraFront(0.f, 0.f, -1.f), cameraUp(0.f, 1.f, 0.f);
+    glm::vec3 cameraPos(0.f, 0.f, 3.f), cameraFront, direction;
+    const glm::vec3 cameraUp(0.f, 1.f, 0.f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        direction.x = cos(glm::radians(Renderer::yaw)) * cos(glm::radians(Renderer::pitch));
+        direction.y = sin(glm::radians(Renderer::pitch));
+        direction.z = sin(glm::radians(Renderer::yaw)) * cos(glm::radians(Renderer::pitch));
+        cameraFront = glm::normalize(direction);
+
         processInput(window, cameraPos, cameraFront, cameraUp);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -198,7 +209,7 @@ int main()
 
         int w_width, w_height;
         glfwGetWindowSize(window, &w_width, &w_height);
-        glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(w_width) / w_height, 0.1f, 100.f);
+        glm::mat4 projection = glm::perspective(glm::radians(Renderer::fov), static_cast<float>(w_width) / w_height, 0.1f, 100.f);
         shader.SetUniform("u_Projection", projection);
 
         // Renderer::Draw(va, ib);
@@ -225,32 +236,4 @@ int main()
     }
     glfwTerminate();
     return 0;
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow *window, glm::vec3 &cameraPos, const glm::vec3 &cameraFront, const glm::vec3 &cameraUp)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    const float cameraSpeed = 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraUp * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraUp * cameraSpeed;
 }
