@@ -8,7 +8,9 @@
 #include "Shader.hpp"
 struct Renderer
 {
-    static float yaw, pitch, fov;
+    static float yaw, pitch;      // for rotation using mouse
+    static float fov;             // for zooming in and out from mouse wheel
+    static int w_width, w_height; // The size of window of glfw
 
     static inline void Clear(uint clearBit = GL_COLOR_BUFFER_BIT) { glClear(clearBit); }
     static void Draw(const VertexArray &va, const IndexBuffer &ib);
@@ -26,6 +28,8 @@ inline void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    Renderer::w_width = width;
+    Renderer::w_height = height;
 }
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);

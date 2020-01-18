@@ -30,7 +30,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow *window = glfwCreateWindow(1072, 804, "Hello World", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(Renderer::w_width, Renderer::w_height, "Learning OpenGL", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -207,9 +207,7 @@ int main()
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         shader.SetUniform("u_View", view);
 
-        int w_width, w_height;
-        glfwGetWindowSize(window, &w_width, &w_height);
-        glm::mat4 projection = glm::perspective(glm::radians(Renderer::fov), static_cast<float>(w_width) / w_height, 0.1f, 100.f);
+        glm::mat4 projection = glm::perspective(glm::radians(Renderer::fov), static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         shader.SetUniform("u_Projection", projection);
 
         // Renderer::Draw(va, ib);

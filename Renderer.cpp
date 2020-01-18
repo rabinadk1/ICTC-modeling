@@ -7,6 +7,10 @@ float Renderer::pitch = 0.f;
 // Change by mouse scrolling
 float Renderer::fov = 45.f;
 
+// Changed by resizing
+int Renderer::w_width = 1072;
+int Renderer::w_height = 804;
+
 void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib)
 {
     va.Bind();
