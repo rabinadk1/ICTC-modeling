@@ -39,6 +39,16 @@ public:
         glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
     }
 
+    inline void SetUniform(const char *name, float v0, float v1, float v2)
+    {
+        glUniform3f(GetUniformLocation(name), v0, v1, v2);
+    }
+
+    inline void SetUniform(const char *name, glm::vec3 vector)
+    {
+        glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vector));
+    }
+
 private:
     /*
     Parses the file in **filepath** and return source code of

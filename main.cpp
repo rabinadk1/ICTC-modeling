@@ -1,7 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -13,8 +10,11 @@
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
-#include "Texture.hpp"
+// #include "Texture.hpp"
 #include "Camera.hpp"
+
+// Position of light source
+#define lightPos glm::vec3(1.2f, 1.0f, 2.0f)
 
 int main()
 {
@@ -72,9 +72,18 @@ int main()
         // glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebugMessageCallback, nullptr);
-        // glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
+        // glDebugMessageControl(GL_DEBUG_SOURCE_API,
+        //                       GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
     }
 
+    //For blending, i.e. for textures with RGBA values
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //enabling depth_test sense depth using z-buffer
+    glEnable(GL_DEPTH_TEST);
+
+    /*
     const float positions[] = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
         0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
@@ -117,6 +126,7 @@ int main()
         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
         -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
         -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
+        */
 
     // const float positions[] = {
     //     // positions   // texture Coords
@@ -128,7 +138,7 @@ int main()
     // const uint indices[] = {
     //     0, 1, 2,
     //     2, 3, 0};
-
+    /*
     glm::vec3 cubePositions[] = {
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(2.0f, 5.0f, -15.0f),
@@ -140,52 +150,100 @@ int main()
         glm::vec3(1.5f, 2.0f, -2.5f),
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)};
+    */
 
-    //For blending, i.e. for textures with RGBA values
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    const float vertices[] = {
+        // positions         // normal vector
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
 
-    //enabling depth_test sense depth using z-buffer
-    glEnable(GL_DEPTH_TEST);
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
 
-    // Vertext Array Object
-    VertexArray va;
+        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
+
+    // Vertex Array Objects
+    VertexArray cubeVAO;  // Cube VAO
+    VertexArray lightVAO; // Light Source VAO
 
     // Vertex Buffer Object
-    VertexBuffer vb(positions, sizeof(positions));
+    VertexBuffer vb(vertices, sizeof(vertices));
 
     // Specifying Layout
     VertexBufferLayout layout;
     // For vertex position
     layout.Push<float>(3);
+    // For normal direction
+    layout.Push<float>(3);
+    /*
     //For texture
-    layout.Push<float>(2);
+    // layout.Push<float>(2);
     // For color
     // layout.Push<float>(3);
-    va.AddBuffer(vb, layout);
+    */
+    cubeVAO.AddBuffer(vb, layout);
+    lightVAO.AddBuffer(vb, layout);
 
     //Element Buffer Object or Index Buffer Object
     // IndexBuffer ib(indices, 6);
 
     // glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
 
-    Shader shader("res/shaders/renderTexture.glsl");
-    shader.Bind();
+    Shader lightingShader("res/shaders/lighting.glsl");
+    Shader lampShader("res/shaders/lamp.glsl");
 
-    Texture texture("res/images/eagleSports.png");
-    texture.Bind();
+    // Texture texture("res/images/eagleSports.png");
+    // texture.Bind();
     // Set the uniform u_Texture to the one bound above
-    shader.SetUniform("u_Texture", 0);
-    // shader.SetUniform("u_MVP", proj);
+    // shader.SetUniform("u_Texture", 0);
 
-    /*
-    Unbinded to bind another object Latero on
-    TODO: Remove later on and don't Unbind **anything**
-    */
-    va.Unbind();
-    vb.Unbind();
-    // ib.Unbind();
-    shader.Unbind();
+    // !be sure to activate shader when setting uniforms/drawing objects
+    lightingShader.Bind();
+    lightingShader.SetUniform("u_ObjectColor", 1.f, 0.5f, 0.31f);
+    lightingShader.SetUniform("u_LightColor", 1.f, 1.f, 1.f);
+    lightingShader.SetUniform("u_LightPos", lightPos);
+
+    // world transformation for cube
+    lightingShader.SetUniform("u_Model", glm::mat4(1.f));
+
+    lampShader.Bind();
+    glm::mat4 model = glm::translate(glm::mat4(1.f), lightPos);
+    model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+    lampShader.SetUniform("u_Model", model);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -193,15 +251,29 @@ int main()
         processInput(window);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        shader.Bind();
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        shader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
+        lightingShader.Bind();
+        // view transformation
+        const glm::mat4 view = Renderer::camera.GetViewMatrix();
+        lightingShader.SetUniform("u_View", view);
 
-        glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()), static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
-        shader.SetUniform("u_Projection", projection);
+        // projection transformation
+        const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
+                                                      static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
+        lightingShader.SetUniform("u_Projection", projection);
 
+        // render the cube
+        Renderer::Draw(cubeVAO, 36);
+
+        // also draw the lamp object
+        lampShader.Bind();
+        lampShader.SetUniform("u_Projection", projection);
+        lampShader.SetUniform("u_View", view);
+
+        Renderer::Draw(lightVAO, 36);
+
+        /*
         // Renderer::Draw(va, ib);
         for (uint i = 0; i < 10; ++i)
         {
@@ -210,6 +282,7 @@ int main()
             shader.SetUniform("u_Model", model);
             Renderer::Draw(va, 36);
         }
+        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
