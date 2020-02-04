@@ -48,7 +48,8 @@ public:
     return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
   }
 
-  float GetFOV() const { return m_FOV; }
+  inline float GetFOV() const { return m_FOV; }
+  inline const glm::vec3 &GetPosition() const { return m_Position; }
 
 private:
   // Calculates the front vector from the Camera's (updated) Euler Angles

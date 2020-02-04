@@ -14,7 +14,7 @@
 #include "Camera.hpp"
 
 // Position of light source
-#define lightPos glm::vec3(1.2f, 1.0f, 2.0f)
+#define LIGHT_POS glm::vec3(1.2f, 1.0f, 2.0f)
 
 int main()
 {
@@ -235,13 +235,13 @@ int main()
     lightingShader.Bind();
     lightingShader.SetUniform("u_ObjectColor", 1.f, 0.5f, 0.31f);
     lightingShader.SetUniform("u_LightColor", 1.f, 1.f, 1.f);
-    lightingShader.SetUniform("u_LightPos", lightPos);
+    lightingShader.SetUniform("u_LightPos", LIGHT_POS);
 
     // world transformation for cube
     lightingShader.SetUniform("u_Model", glm::mat4(1.f));
 
     lampShader.Bind();
-    glm::mat4 model = glm::translate(glm::mat4(1.f), lightPos);
+    glm::mat4 model = glm::translate(glm::mat4(1.f), LIGHT_POS);
     model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
     lampShader.SetUniform("u_Model", model);
 
@@ -257,6 +257,8 @@ int main()
         // view transformation
         const glm::mat4 view = Renderer::camera.GetViewMatrix();
         lightingShader.SetUniform("u_View", view);
+
+        lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
 
         // projection transformation
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
