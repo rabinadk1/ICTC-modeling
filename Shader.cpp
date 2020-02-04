@@ -58,7 +58,7 @@ uint Shader::CompileShader(const uint type, const std::string &source) const
 
     if (!result)
     {
-        std::cerr << "ERROR:Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragement") << " shader" << std::endl;
+        std::cerr << "ERROR:Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader" << std::endl;
         glDeleteShader(id);
         return 0;
     }

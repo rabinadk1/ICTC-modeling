@@ -29,6 +29,11 @@ public:
         glUniform1i(GetUniformLocation(name), value);
     }
 
+    inline void SetUniform(const char *name, float value)
+    {
+        glUniform1f(GetUniformLocation(name), value);
+    }
+
     inline void SetUniform(const char *name, const glm::mat4 &matrix)
     {
         glUniformMatrix4fv(GetUniformLocation(name), 1, false, glm::value_ptr(matrix));
@@ -44,7 +49,7 @@ public:
         glUniform3f(GetUniformLocation(name), v0, v1, v2);
     }
 
-    inline void SetUniform(const char *name, glm::vec3 vector)
+    inline void SetUniform(const char *name, const glm::vec3 &vector)
     {
         glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vector));
     }

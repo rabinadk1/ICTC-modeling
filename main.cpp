@@ -233,8 +233,14 @@ int main()
 
     // !be sure to activate shader when setting uniforms/drawing objects
     lightingShader.Bind();
-    lightingShader.SetUniform("u_ObjectColor", 1.f, 0.5f, 0.31f);
     lightingShader.SetUniform("u_LightColor", 1.f, 1.f, 1.f);
+
+    // For Gold, from ** OpenGL/VRML Materials **
+    lightingShader.SetUniform("u_Material.ambient", glm::vec3(0.24725f, 0.1995f, 0.0745f));
+    lightingShader.SetUniform("u_Material.diffuse", glm::vec3(0.75164f, 0.60648f, 0.22648f));
+    lightingShader.SetUniform("u_Material.specular", glm::vec3(0.628281f, 0.555802f, 0.366065f));
+    lightingShader.SetUniform("u_Material.shininess", 0.4f * 128);
+
     lightingShader.SetUniform("u_LightPos", LIGHT_POS);
 
     // world transformation for cube
