@@ -5,13 +5,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
-#include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
-// #include "Texture.hpp"
-#include "Camera.hpp"
+#include "Model.hpp"
 
 // Position of light source
 #define LIGHT_POS glm::vec3(1.2f, 1.0f, 2.0f)
@@ -83,173 +79,14 @@ int main()
     //enabling depth_test sense depth using z-buffer
     glEnable(GL_DEPTH_TEST);
 
-    /*
-    const float positions[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+    Model model("res/objects/nanosuit/nanosuit.obj");
 
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    Shader shader("res/shaders/modelLoading.glsl");
 
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
-        */
-
-    // const float positions[] = {
-    //     // positions   // texture Coords
-    //     -0.5f, -0.5f, 0.f, 0.f,
-    //     0.5f, -0.5f, 1.f, 0.f,
-    //     0.5f, 0.5f, 1.f, 1.f,
-    //     -0.5f, 0.5f, 0.f, 1.f};
-
-    // const uint indices[] = {
-    //     0, 1, 2,
-    //     2, 3, 0};
-    /*
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)};
-    */
-
-    const float vertices[] = {
-        // positions         // normal vector
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
-
-    // Vertex Array Objects
-    VertexArray cubeVAO;  // Cube VAO
-    VertexArray lightVAO; // Light Source VAO
-
-    // Vertex Buffer Object
-    VertexBuffer vb(vertices, sizeof(vertices));
-
-    // Specifying Layout
-    VertexBufferLayout layout;
-    // For vertex position
-    layout.Push<float>(3);
-    // For normal direction
-    layout.Push<float>(3);
-    /*
-    //For texture
-    // layout.Push<float>(2);
-    // For color
-    // layout.Push<float>(3);
-    */
-    cubeVAO.AddBuffer(vb, layout);
-    lightVAO.AddBuffer(vb, layout);
-
-    //Element Buffer Object or Index Buffer Object
-    // IndexBuffer ib(indices, 6);
-
-    // glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
-
-    Shader lightingShader("res/shaders/lighting.glsl");
-    Shader lampShader("res/shaders/lamp.glsl");
-
-    // Texture texture("res/images/eagleSports.png");
-    // texture.Bind();
-    // Set the uniform u_Texture to the one bound above
-    // shader.SetUniform("u_Texture", 0);
-
-    // !be sure to activate shader when setting uniforms/drawing objects
-    lightingShader.Bind();
-    lightingShader.SetUniform("u_LightColor", 1.f, 1.f, 1.f);
-
-    // For Gold, from ** OpenGL/VRML Materials **
-    lightingShader.SetUniform("u_Material.ambient", glm::vec3(0.24725f, 0.1995f, 0.0745f));
-    lightingShader.SetUniform("u_Material.diffuse", glm::vec3(0.75164f, 0.60648f, 0.22648f));
-    lightingShader.SetUniform("u_Material.specular", glm::vec3(0.628281f, 0.555802f, 0.366065f));
-    lightingShader.SetUniform("u_Material.shininess", 0.4f * 128);
-
-    lightingShader.SetUniform("u_LightPos", LIGHT_POS);
-
-    // world transformation for cube
-    lightingShader.SetUniform("u_Model", glm::mat4(1.f));
-
-    lampShader.Bind();
-    glm::mat4 model = glm::translate(glm::mat4(1.f), LIGHT_POS);
-    model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-    lampShader.SetUniform("u_Model", model);
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
+    shader.Bind();
+    shader.SetUniform("model", modelMatrix);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -259,38 +96,13 @@ int main()
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        lightingShader.Bind();
-        // view transformation
-        const glm::mat4 view = Renderer::camera.GetViewMatrix();
-        lightingShader.SetUniform("u_View", view);
-
-        lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
-
         // projection transformation
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
-        lightingShader.SetUniform("u_Projection", projection);
+        shader.SetUniform("projection", projection);
+        shader.SetUniform("view", Renderer::camera.GetViewMatrix());
 
-        // render the cube
-        Renderer::Draw(cubeVAO, 36);
-
-        // also draw the lamp object
-        lampShader.Bind();
-        lampShader.SetUniform("u_Projection", projection);
-        lampShader.SetUniform("u_View", view);
-
-        Renderer::Draw(lightVAO, 36);
-
-        /*
-        // Renderer::Draw(va, ib);
-        for (uint i = 0; i < 10; ++i)
-        {
-            glm::mat4 model = glm::translate(glm::mat4(1.f), cubePositions[i]);
-            model = glm::rotate(model, static_cast<float>(glfwGetTime()) + glm::radians(20.f * i), glm::vec3(1.f, 0.3f, 0.5f));
-            shader.SetUniform("u_Model", model);
-            Renderer::Draw(va, 36);
-        }
-        */
+        model.Draw(shader);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
