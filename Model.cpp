@@ -33,14 +33,14 @@ void Model::ProcessNode(const aiNode *node, const aiScene *scene)
     // the node object only contains indices to index the actual objects in the scene.
     // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
     const aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-    m_Meshes.push_back(ProcessMesh(mesh, scene));
+    ProcessMesh(mesh, scene);
   }
   // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
   for (uint i = 0; i < node->mNumChildren; ++i)
     ProcessNode(node->mChildren[i], scene);
 }
 
-Mesh Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
+void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
 {
   // data to fill
   std::vector<Vertex> vertices(mesh->mNumVertices);
@@ -123,7 +123,7 @@ Mesh Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
     textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
   }
   // return a mesh object created from the extracted mesh data
-  return Mesh(vertices, indices, textures);
+  m_Meshes.emplace_back(vertices, indices, textures);
 }
 
 std::vector<Texture> Model::LoadMaterialTextures(const aiMaterial *mat, aiTextureType type, const char *typeName)
