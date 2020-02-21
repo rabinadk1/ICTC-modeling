@@ -10,7 +10,7 @@
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
-// #include "Texture.hpp"
+#include "Texture.hpp"
 #include "Camera.hpp"
 
 // Position of light source
@@ -153,48 +153,48 @@ int main()
     */
 
     const float vertices[] = {
-        // positions         // normal vector
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+        // positions          // normals        // texture coords
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
 
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
     // Vertex Array Objects
     VertexArray cubeVAO;  // Cube VAO
@@ -209,6 +209,8 @@ int main()
     layout.Push<float>(3);
     // For normal direction
     layout.Push<float>(3);
+    // For texture coordinates
+    layout.Push<float>(2);
     /*
     //For texture
     // layout.Push<float>(2);
@@ -223,25 +225,26 @@ int main()
 
     // glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
 
-    Shader lightingShader("res/shaders/lighting.glsl");
+    Shader lightingShader("res/shaders/lightingMap.glsl");
     Shader lampShader("res/shaders/lamp.glsl");
 
-    // Texture texture("res/images/eagleSports.png");
-    // texture.Bind();
+    Texture diffuseMap("res/images/container.png");
+    Texture specularMap("res/images/container_specular.png");
+    diffuseMap.Bind();
+    specularMap.Bind(1);
     // Set the uniform u_Texture to the one bound above
-    // shader.SetUniform("u_Texture", 0);
+    // lightingShader.SetUniform("u_Texture", 0);
 
     // !be sure to activate shader when setting uniforms/drawing objects
     lightingShader.Bind();
-    lightingShader.SetUniform("u_LightColor", 1.f, 1.f, 1.f);
+    lightingShader.SetUniform("u_Light.position", LIGHT_POS);
+    lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // For Gold, from ** OpenGL/VRML Materials **
-    lightingShader.SetUniform("u_Material.ambient", glm::vec3(0.24725f, 0.1995f, 0.0745f));
-    lightingShader.SetUniform("u_Material.diffuse", glm::vec3(0.75164f, 0.60648f, 0.22648f));
-    lightingShader.SetUniform("u_Material.specular", glm::vec3(0.628281f, 0.555802f, 0.366065f));
-    lightingShader.SetUniform("u_Material.shininess", 0.4f * 128);
-
-    lightingShader.SetUniform("u_LightPos", LIGHT_POS);
+    lightingShader.SetUniform("u_Material.diffuse", 0);
+    lightingShader.SetUniform("u_Material.specular", 1);
+    lightingShader.SetUniform("u_Material.shininess", 64.0f);
 
     // world transformation for cube
     lightingShader.SetUniform("u_Model", glm::mat4(1.f));
@@ -270,6 +273,9 @@ int main()
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
+
+        diffuseMap.Bind();
+        specularMap.Bind(1);
 
         // render the cube
         Renderer::Draw(cubeVAO, 36);
