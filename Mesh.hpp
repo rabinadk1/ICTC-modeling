@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 
 #include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
@@ -32,6 +33,7 @@ private:
   const std::vector<Texture> m_Textures;
   const VertexArray m_VA;
   const IndexBuffer m_IB;
+  const VertexBuffer m_VB;
 
 private:
   void SetupMesh() const;

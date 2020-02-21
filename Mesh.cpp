@@ -1,5 +1,4 @@
 #include "Mesh.hpp"
-#include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
 #include "Renderer.hpp"
 
@@ -7,20 +6,18 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint> &indices, std::vecto
     : m_Vertices(vertices),
       m_Indices(indices),
       m_Textures(textures),
-      m_IB(&indices[0], indices.size())
+      m_IB(&indices[0], indices.size()),
+      /*
+      NOTE: Address of Vector and the address of first element of vector are different.
+      Also, sizeof(<vector>) is the size of the vector not containing data
+      */
+      m_VB(&vertices[0], sizeof(Vertex) * vertices.size())
 {
   SetupMesh();
 }
 
 void Mesh::SetupMesh() const
 {
-
-  /*
-  NOTE: Address of Vector and the address of first element of vector are different.
-    Also, sizeof(<vector>) is the size of the vector not containing data
-  */
-  const VertexBuffer vbo(&m_Vertices[0], sizeof(Vertex) * m_Vertices.size());
-
   VertexBufferLayout layout;
 
   // For Vertex Positions
@@ -38,7 +35,7 @@ void Mesh::SetupMesh() const
   // For Vertex Bitangent
   layout.Push<float>(3);
 
-  m_VA.AddBuffer(vbo, layout);
+  m_VA.AddBuffer(m_VB, layout);
 }
 
 void Mesh::Draw(Shader &shader) const
@@ -49,7 +46,7 @@ void Mesh::Draw(Shader &shader) const
   uint normalNr = 1;
   uint heightNr = 1;
 
-  for (int i = 0; i < m_Textures.size(); ++i)
+  for (uint i = 0; i < m_Textures.size(); ++i)
   {
     // retrieve texture number (the N in diffuse_textureN)
     std::string number;
@@ -64,7 +61,7 @@ void Mesh::Draw(Shader &shader) const
     else if (textureType == "height")
       number = std::to_string(heightNr++); // transfer unsigned int to stream
 
-    shader.SetUniform(("material." + textureType + number).c_str(), i);
+    shader.SetUniform(("texture_" + textureType + number).c_str(), static_cast<int>(i));
     m_Textures[i].Bind(i);
   }
 

@@ -33,7 +33,7 @@ public:
   // draws the model, and thus all its meshes
   void Draw(Shader &shader)
   {
-    for (ulong i = 0; i < m_Meshes.size(); ++i)
-      m_Meshes[i].Draw(shader);
+    for (auto &mesh : m_Meshes)
+      mesh.Draw(shader);
   }
 };
