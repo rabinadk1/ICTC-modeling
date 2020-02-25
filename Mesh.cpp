@@ -57,16 +57,15 @@ void Mesh::Draw(Shader &shader) const
 
     if (textureType == "diffuse")
       number = std::to_string(diffuseNr++);
+    else if (textureType == "specular")
+      number = std::to_string(specularNr++); // transfer unsigned int to stream
+    // else if (textureType == "normal")
+    //   number = std::to_string(normalNr++); // transfer unsigned int to stream
+    // else if (textureType == "height")
+    //   number = std::to_string(heightNr++); // transfer unsigned int to stream
     else
       continue;
-    // else if (textureType == "specular")
-    // number = std::to_string(specularNr++); // transfer unsigned int to stream
-    // else if (textureType == "normal")
-    // number = std::to_string(normalNr++); // transfer unsigned int to stream
-    // else if (textureType == "height")
-    // number = std::to_string(heightNr++); // transfer unsigned int to stream
-
-    shader.SetUniform(("texture_" + textureType + number).c_str(), static_cast<int>(i));
+    shader.SetUniform(("u_Material." + textureType + number).c_str(), static_cast<int>(i));
     texture.Bind(i);
   }
 
