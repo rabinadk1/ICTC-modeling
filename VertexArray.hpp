@@ -10,9 +10,9 @@ private:
 
 public:
     VertexArray() { glGenVertexArrays(1, &m_RendererID); }
-    ~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
+    // ~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
 
-    void AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout);
+    void AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout) const;
 
     inline void Bind() const { glBindVertexArray(m_RendererID); }
 

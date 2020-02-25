@@ -10,7 +10,7 @@ private:
 
 public:
     IndexBuffer(const unsigned int *data, const unsigned int count);
-    ~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
+    // ~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 
     inline void Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID); }
     inline void Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); };

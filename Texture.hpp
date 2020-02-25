@@ -9,10 +9,11 @@ private:
   unsigned int m_RendererID;
   std::string m_Filepath;
   int m_Width, m_Height, m_ChannelNumber;
+  std::string m_Type;
 
 public:
-  Texture(const char *path);
-  ~Texture() { glDeleteTextures(1, &m_RendererID); }
+  Texture(const std::string &path, const char *type = "default");
+  // ~Texture() { glDeleteTextures(1, &m_RendererID); }
 
   inline void Bind(unsigned int slot = 0) const
   {
@@ -20,4 +21,5 @@ public:
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
   }
   inline void Unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
+  inline const std::string &GetType() const { return m_Type; }
 };
