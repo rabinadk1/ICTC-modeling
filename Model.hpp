@@ -24,7 +24,7 @@ private:
   checks all material textures of a given type and loads the textures if they're not loaded yet
   the required info is returned as a Texture struct.
   */
-  std::vector<Texture> LoadMaterialTextures(const aiMaterial *mat, aiTextureType type, const char *typeName);
+  void LoadMaterialTextures(const aiMaterial *mat, std::vector<std::string> &textures, aiTextureType type, const char *typeName);
 
 public:
   // constructor, expects a filepath to a 3D model.

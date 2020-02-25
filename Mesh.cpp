@@ -2,10 +2,12 @@
 #include "VertexBufferLayout.hpp"
 #include "Renderer.hpp"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint> &indices, std::vector<Texture> &textures)
-    : m_Vertices(vertices),
+Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<uint> &indices, const std::unordered_map<std::string, Texture> &texturesLoaded, std::vector<std::string> &textures)
+    : m_TexturesLoaded(texturesLoaded),
+      m_Vertices(vertices),
       m_Indices(indices),
       m_Textures(textures),
+      m_VA(),
       m_IB(&indices[0], indices.size()),
       /*
       NOTE: Address of Vector and the address of first element of vector are different.
@@ -48,21 +50,24 @@ void Mesh::Draw(Shader &shader) const
 
   for (uint i = 0; i < m_Textures.size(); ++i)
   {
+    const Texture &texture = m_TexturesLoaded.find(m_Textures[i])->second;
     // retrieve texture number (the N in diffuse_textureN)
     std::string number;
-    const std::string textureType = m_Textures[i].GetType();
+    const std::string &textureType = texture.GetType();
 
     if (textureType == "diffuse")
       number = std::to_string(diffuseNr++);
-    else if (textureType == "specular")
-      number = std::to_string(specularNr++); // transfer unsigned int to stream
-    else if (textureType == "normal")
-      number = std::to_string(normalNr++); // transfer unsigned int to stream
-    else if (textureType == "height")
-      number = std::to_string(heightNr++); // transfer unsigned int to stream
+    else
+      continue;
+    // else if (textureType == "specular")
+    // number = std::to_string(specularNr++); // transfer unsigned int to stream
+    // else if (textureType == "normal")
+    // number = std::to_string(normalNr++); // transfer unsigned int to stream
+    // else if (textureType == "height")
+    // number = std::to_string(heightNr++); // transfer unsigned int to stream
 
     shader.SetUniform(("texture_" + textureType + number).c_str(), static_cast<int>(i));
-    m_Textures[i].Bind(i);
+    texture.Bind(i);
   }
 
   // Draw mesh

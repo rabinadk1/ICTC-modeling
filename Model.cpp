@@ -12,7 +12,7 @@ Model::Model(const std::string &path)
   // read file via ASSIMP
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(
-      path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+      path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals);
 
   // check for errors
   if (!scene or scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE or !scene->mRootNode)
@@ -43,9 +43,10 @@ void Model::ProcessNode(const aiNode *node, const aiScene *scene)
 void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
 {
   // data to fill
-  std::vector<Vertex> vertices(mesh->mNumVertices);
+  std::vector<Vertex> vertices;
+  vertices.reserve(mesh->mNumVertices);
   std::vector<uint> indices;
-  std::vector<Texture> textures;
+  std::vector<std::string> textures;
 
   // Walk through each of the mesh's vertices
   for (uint i = 0; i < mesh->mNumVertices; ++i)
@@ -53,7 +54,7 @@ void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
     Vertex vertex;
     // aiVector is container for positions and normals of assimp which cannot be converted to glm::vec3 directly
     // For positions
-    aiVector3D &aiVector = mesh->mVertices[i];
+    aiVector3D aiVector = mesh->mVertices[i];
     vertex.Position = glm::vec3(aiVector.x, aiVector.y, aiVector.z);
 
     // For normals
@@ -107,41 +108,37 @@ void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
     */
 
     //Diffuse Maps
-    std::vector<Texture> lightingMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
-    textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
+    LoadMaterialTextures(material, textures, aiTextureType_DIFFUSE, "diffuse");
 
     // Specular Maps
-    lightingMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
-    textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
+    LoadMaterialTextures(material, textures, aiTextureType_SPECULAR, "specular");
 
     // Normal maps
-    lightingMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "normal");
-    textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
+    LoadMaterialTextures(material, textures, aiTextureType_HEIGHT, "normal");
 
     // Height maps
-    lightingMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "height");
-    textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
+    LoadMaterialTextures(material, textures, aiTextureType_AMBIENT, "height");
+    // textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
   }
   // return a mesh object created from the extracted mesh data
-  m_Meshes.emplace_back(vertices, indices, textures);
+  m_Meshes.emplace_back(vertices, indices, m_TexturesLoaded, textures);
 }
 
-std::vector<Texture> Model::LoadMaterialTextures(const aiMaterial *mat, aiTextureType type, const char *typeName)
+void Model::LoadMaterialTextures(const aiMaterial *mat, std::vector<std::string> &textures, aiTextureType type, const char *typeName)
 {
-  std::vector<Texture> textures;
   for (uint i = 0; i < mat->GetTextureCount(type); ++i)
   {
     aiString path;
     mat->GetTexture(type, i, &path);
     std::string pathString = path.C_Str();
     const auto loadedTexture = m_TexturesLoaded.find(pathString);
-    if (loadedTexture != m_TexturesLoaded.end())
-      textures.push_back(loadedTexture->second);
-    else // if texture hasn't been loaded already, load it
+    if (loadedTexture == m_TexturesLoaded.end())
+    {
       m_TexturesLoaded.emplace(std::piecewise_construct,
                                std::forward_as_tuple(pathString),
                                std::forward_as_tuple(m_Directory + '/' + pathString,
                                                      typeName));
+    }
+    textures.push_back(pathString);
   }
-  return textures;
 }

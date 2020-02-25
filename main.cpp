@@ -73,8 +73,8 @@ int main()
     }
 
     //For blending, i.e. for textures with RGBA values
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //enabling depth_test sense depth using z-buffer
     glEnable(GL_DEPTH_TEST);
@@ -83,6 +83,7 @@ int main()
 
     Shader shader("res/shaders/modelLoading.glsl");
 
+    // glm::mat4 modelMatrix = glm::identity<glm::mat4>();
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
     shader.Bind();
@@ -93,6 +94,7 @@ int main()
     {
         processInput(window);
 
+        glClearColor(1, 0, 1, 1);
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // shader.SetUniform("u_Color", r, 0.3f, 0.8f, 1.0f);
 

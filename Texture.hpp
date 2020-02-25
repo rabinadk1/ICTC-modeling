@@ -13,7 +13,7 @@ private:
 
 public:
   Texture(const std::string &path, const char *type = "default");
-  ~Texture() { glDeleteTextures(1, &m_RendererID); }
+  // ~Texture() { glDeleteTextures(1, &m_RendererID); }
 
   inline void Bind(unsigned int slot = 0) const
   {
