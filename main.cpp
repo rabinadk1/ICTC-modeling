@@ -166,7 +166,7 @@ int main()
 
     // glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f);
 
-    Shader lightingShader("res/shaders/lightingMap.glsl");
+    Shader lightingShader("res/shaders/lighting.glsl");
     Shader lampShader("res/shaders/lamp.glsl");
 
     // Texture diffuseMap("res/images/container.png");
@@ -191,7 +191,7 @@ int main()
     lampShader.SetUniform("u_Model", model);
 
     // modal Loading
-    Model modelObject("res/objects/nanosuit/nanosuit.obj");
+    Model modelObject("res/objects/ranipokhari/Ranipokhari2.obj");
 
     // Shader shader("res/shaders/modelLoading.glsl");
 
@@ -220,14 +220,18 @@ int main()
         // projection transformation
         lightingShader.Bind();
         lightingShader.SetUniform("u_Light.position", LIGHT_POS);
-        lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
+        lightingShader.SetUniform("u_Light.direction", Renderer::camera.GetFront());
+        lightingShader.SetUniform("u_Light.cutoff", glm::cos(glm::radians(25.0f)));
+        lightingShader.SetUniform("u_Light.outerCutoff", glm::cos(glm::radians(35.0f)));
+
+        // lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
         lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-        lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-        lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f, 0.8f, 1.0f));
+        lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f, 1.0f, 0.8f));
         lightingShader.SetUniform("u_Light.constant", 1.0f);
-        lightingShader.SetUniform("u_Light.linear", 0.2f);
-        lightingShader.SetUniform("u_Light.quadratic", 0.073f);
+        lightingShader.SetUniform("u_Light.linear", 0.09f);
+        lightingShader.SetUniform("u_Light.quadratic", 0.032f);
         glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                 static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
@@ -235,7 +239,10 @@ int main()
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
         lightingShader.SetUniform("u_Model", modelMatrix);
-        lightingShader.SetUniform("u_Material.shininess", 128.0f);
+        lightingShader.SetUniform("u_Material.shininess", .078125f * 128.0f);
+        lightingShader.SetUniform("u_Material.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        lightingShader.SetUniform("u_Material.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        lightingShader.SetUniform("u_Material.specular", glm::vec3(0.7f, 0.7f, 0.7f));
 
         modelObject.Draw(lightingShader);
 
