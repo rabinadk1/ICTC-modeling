@@ -160,9 +160,10 @@ int main()
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // projection transformation
+        const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
-        lightingShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
+        lightingShader.SetUniform("u_View", lookAt);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
@@ -172,7 +173,7 @@ int main()
         // also draw the lamp object
         lampShader.Bind();
         lampShader.SetUniform("u_Projection", projection);
-        lampShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
+        lampShader.SetUniform("u_View", lookAt);
 
         Renderer::Draw(va, ib);
 
