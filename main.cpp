@@ -116,7 +116,7 @@ int main()
     // Vertex Buffer Object
     const VertexBuffer vb(vertices, sizeof(vertices));
 
-    const IndexBuffer ib(indices, sizeof(vertices) / sizeof(uint));
+    const IndexBuffer ib(indices, sizeof(indices) / sizeof(uint));
 
     // Specifying Layout
     VertexBufferLayout layout;
