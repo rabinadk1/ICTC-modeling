@@ -52,28 +52,28 @@ uniform vec3 u_ViewPos;
 
 void main()
 {
-    vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
-    vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
-    vec4 material_diffuse =  0.5 * col_diffuse_1 + 0.5 * col_diffuse_2; 
+    const vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
+    const vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
+    const vec4 material_diffuse =  0.5 * col_diffuse_1 + 0.5 * col_diffuse_2;
     const vec3 ambient = u_Light.ambient * material_diffuse.rgb;
 
     const vec3 lightDir = normalize(u_Light.position-FragPos);
-    float diff = max(dot(normal, lightDir), 0.0);
+    const float diff = max(dot(normal, lightDir), 0.0);
     const vec3 diffuse = diff * u_Light.diffuse * material_diffuse.rgb;
 
-    vec4 col_specular_1 = texture(u_Material.specular1, TexCoords);
-    vec4 col_specular_2 = texture(u_Material.specular2, TexCoords);
-    vec4 material_specular = col_specular_1 * col_specular_2;
+    const vec4 col_specular_1 = texture(u_Material.specular1, TexCoords);
+    const vec4 col_specular_2 = texture(u_Material.specular2, TexCoords);
+    const vec4 material_specular = col_specular_1 * col_specular_2;
 
     const vec3 viewDir = normalize(u_ViewPos-FragPos);
     const vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
+    const float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
     const vec3 specular = spec * u_Light.specular * material_specular.rgb;
 
     // for light attenuation
-    float distance = length(u_Light.position - FragPos);
-    float attenuation = 1.0 / (u_Light.constant + u_Light.linear * distance +
-                                u_Light.quadratic * (distance * distance));                            
+    const float distance = length(u_Light.position - FragPos);
+    const float attenuation = 1.0 / (u_Light.constant + u_Light.linear * distance +
+                                u_Light.quadratic * (distance * distance));
 
     const vec3 result = ((ambient*attenuation)+(diffuse*attenuation)+(specular*attenuation));
     FragColor = vec4(result, 1.0);
