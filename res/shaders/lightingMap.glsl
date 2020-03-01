@@ -54,21 +54,25 @@ void main()
 {
     vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
     vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
-    vec4 material_diffuse =  0.5 * col_diffuse_1 + 0.5 * col_diffuse_2; 
-    const vec3 ambient = u_Light.ambient * material_diffuse.rgb;
+    vec4 material_diffuse =  0.5 * (col_diffuse_1 + col_diffuse_2);
+    // ambient lighting 
+    vec3 ambient = u_Light.ambient * material_diffuse.rgb;
+    
 
+    // diffuse lighting
     const vec3 lightDir = normalize(u_Light.position-FragPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    const vec3 diffuse = diff * u_Light.diffuse * material_diffuse.rgb;
+    vec3 diffuse = u_Light.diffuse * diff * material_diffuse.rgb;
 
+    // specular lighting
     vec4 col_specular_1 = texture(u_Material.specular1, TexCoords);
     vec4 col_specular_2 = texture(u_Material.specular2, TexCoords);
     vec4 material_specular = col_specular_1 * col_specular_2;
 
-    const vec3 viewDir = normalize(u_ViewPos-FragPos);
-    const vec3 reflectDir = reflect(-lightDir, normal);
+    vec3 viewDir = normalize(u_ViewPos-FragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
-    const vec3 specular = spec * u_Light.specular * material_specular.rgb;
+    vec3 specular = u_Light.specular * spec * material_specular.rgb;
 
     // for light attenuation
     float distance = length(u_Light.position - FragPos);
