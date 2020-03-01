@@ -80,67 +80,55 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     const float vertices[] = {
-        // positions
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        // front
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        // back
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, 1.0, -1.0,
+        -1.0, 1.0, -1.0};
 
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
+    const uint indices[] = {
+        // front
+        0, 1, 2,
+        2, 3, 0,
+        // right
+        1, 5, 6,
+        6, 2, 1,
+        // back
+        7, 6, 5,
+        5, 4, 7,
+        // left
+        4, 0, 3,
+        3, 7, 4,
+        // bottom
+        4, 5, 1,
+        1, 0, 4,
+        // top
+        3, 2, 6,
+        6, 7, 3};
 
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f};
-
-    // Vertex Array Objects
-    // VertexArray cubeVAO;  // Cube VAO
-    VertexArray lightVAO; // Light Source VAO
+    const VertexArray va; // Light Source VAO
 
     // Vertex Buffer Object
-    VertexBuffer vb(vertices, sizeof(vertices));
+    const VertexBuffer vb(vertices, sizeof(vertices));
+
+    const IndexBuffer ib(indices, sizeof(vertices) / sizeof(uint));
 
     // Specifying Layout
     VertexBufferLayout layout;
     // For vertex position
     layout.Push<float>(3);
-    lightVAO.AddBuffer(vb, layout);
+    va.AddBuffer(vb, layout);
 
     Shader lightingShader("res/shaders/lightingMap.glsl");
     Shader lampShader("res/shaders/lamp.glsl");
 
     glm::mat4 lampModelMatrix = glm::translate(glm::mat4(1.f), LIGHT_POS);
-    lampModelMatrix = glm::scale(lampModelMatrix, glm::vec3(0.2f)); // a smaller cube
+    lampModelMatrix = glm::scale(lampModelMatrix, glm::vec3(0.1f)); // a smaller cube
     lampShader.Bind();
     lampShader.SetUniform("u_Model", lampModelMatrix);
 
@@ -159,7 +147,7 @@ int main()
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
 
     // model Loading
-    Model modelObject("res/objects/ICTC/ICTC.obj");
+    Model modelObject("res/objects/nanosuit/nanosuit.obj");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -175,8 +163,8 @@ int main()
         lightingShader.Bind();
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
-        glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
-                                                static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
+        const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
+                                                      static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
 
         modelObject.Draw(lightingShader);
@@ -186,7 +174,7 @@ int main()
         lampShader.SetUniform("u_Projection", projection);
         lampShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
 
-        Renderer::Draw(lightVAO, 36);
+        Renderer::Draw(va, ib);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
