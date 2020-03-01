@@ -3,9 +3,8 @@
 *
 !*.*
 
-# Track Directories, Makefile and LICENSE
+# Track Directories and LICENSE
 !*/
-!Makefile
 !LICENSE
 
 # Prerequisites
@@ -41,6 +40,9 @@
 *.exe
 *.out
 *.app
+
+### CMake ###
+build
 
 ### VisualStudioCode ###
 .vscode/*
