@@ -12,7 +12,7 @@ Model::Model(const std::string &path)
   // read file via ASSIMP
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(
-      path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals);
+      path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices);
 
   // check for errors
   if (!scene or scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE or !scene->mRootNode)
@@ -112,10 +112,10 @@ void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
   LoadMaterialTextures(material, textures, aiTextureType_SPECULAR, "specular");
 
   // Normal maps
-  LoadMaterialTextures(material, textures, aiTextureType_HEIGHT, "normal");
+  // LoadMaterialTextures(material, textures, aiTextureType_HEIGHT, "normal");
 
   // Height maps
-  LoadMaterialTextures(material, textures, aiTextureType_AMBIENT, "height");
+  // LoadMaterialTextures(material, textures, aiTextureType_AMBIENT, "height");
 
   // return a mesh object created from the extracted mesh data
   m_Meshes.emplace_back(vertices, indices, m_TexturesLoaded, textures);
