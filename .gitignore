@@ -14,8 +14,7 @@
 *.slo
 *.lo
 *.o
-*.obj
-!nanosuit.obj
+# *.obj
 
 # Precompiled Headers
 *.gch
