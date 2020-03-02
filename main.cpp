@@ -133,13 +133,12 @@ int main()
     lampShader.SetUniform("u_Model", lampModelMatrix);
 
     lightingShader.Bind();
-    lightingShader.SetUniform("u_Light.position", LIGHT_POS);
     lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f));
     lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f));
     lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f));
-    lightingShader.SetUniform("u_Light.constant", 1.0f);
-    lightingShader.SetUniform("u_Light.linear", 0.2f);
-    lightingShader.SetUniform("u_Light.quadratic", 0.073f);
+    lightingShader.SetUniform("u_Light.constant", .1f);
+    lightingShader.SetUniform("u_Light.linear", 0.02f);
+    lightingShader.SetUniform("u_Light.quadratic", 0.013f);
 
     glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
     lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
@@ -147,7 +146,7 @@ int main()
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
 
     // model Loading
-    Model modelObject("res/objects/nanosuit/nanosuit.obj");
+    Model modelObject("res/objects/ICTC/ICTC3.obj");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -162,6 +161,7 @@ int main()
         // projection transformation
         const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
+        lightingShader.SetUniform("u_Light.position", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_View", lookAt);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
