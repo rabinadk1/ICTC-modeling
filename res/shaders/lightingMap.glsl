@@ -76,5 +76,5 @@ void main()
                                 u_Light.quadratic * (distance * distance));
 
     const vec3 result = ((ambient*attenuation)+(diffuse*attenuation)+(specular*attenuation));
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, col_diffuse_2.w);
 }

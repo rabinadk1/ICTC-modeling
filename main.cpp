@@ -146,7 +146,10 @@ int main()
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
 
     // model Loading
-    Model modelObject("res/objects/ICTC/ICTC3.obj");
+    Model glass("res/objects/ICTC/ictc_glass.fbx");
+    Model home("res/objects/ICTC/ictc.fbx");
+    Model room("res/objects/ICTC/ICTCRoom.fbx");
+
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -155,6 +158,10 @@ int main()
 
         // To keep the background at a certain color
         glClearColor(1, 0, 1, 1);
+
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_BACK);
+        // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -168,7 +175,13 @@ int main()
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
 
-        modelObject.Draw(lightingShader);
+        
+        glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
+    lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
+    lightingShader.SetUniform("u_Model", lightingModelMatrix);
+        home.Draw(lightingShader);
+        room.Draw(lightingShader);
+glass.Draw(lightingShader);
 
         // also draw the lamp object
         lampShader.Bind();
