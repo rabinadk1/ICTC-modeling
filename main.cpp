@@ -79,6 +79,30 @@ int main()
     //enabling depth_test sense depth using z-buffer
     glEnable(GL_DEPTH_TEST);
 
+    const float planeVertices[] = {
+        -1, 0, -1,
+        1, 0, -1,
+        1, 0, 1,
+        -1, 0, 1};
+
+    const uint planeIndices[] = {
+        0, 1, 2,
+        2, 3, 0};
+
+    const VertexArray planeVA;
+    const VertexBuffer planeVB(planeVertices, sizeof(planeVertices));
+    const IndexBuffer planeIB(planeIndices, sizeof(planeIndices) / sizeof(uint));
+
+    VertexBufferLayout planeLayout;
+    planeLayout.Push<float>(3);
+
+    planeVA.AddBuffer(planeVB, planeLayout);
+    Shader planeShader("res/shaders/lamp.glsl");
+    glm::mat4 planeModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(10.f, -1.75f, 0.f));
+    planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(100.f));
+    planeShader.Bind();
+    planeShader.SetUniform("u_Model", planeModelMatrix);
+
     const float vertices[] = {
         // front
         -1.0, -1.0, 1.0,
@@ -124,14 +148,18 @@ int main()
     layout.Push<float>(3);
     va.AddBuffer(vb, layout);
 
-    Shader lightingShader("res/shaders/lightingMap.glsl");
     Shader lampShader("res/shaders/lamp.glsl");
-
     glm::mat4 lampModelMatrix = glm::translate(glm::mat4(1.f), LIGHT_POS);
     lampModelMatrix = glm::scale(lampModelMatrix, glm::vec3(0.1f)); // a smaller cube
     lampShader.Bind();
     lampShader.SetUniform("u_Model", lampModelMatrix);
 
+    // model Loading
+    Model home("res/objects/ICTC/ictc.fbx");
+    Model room("res/objects/ICTC/ICTCRoom.fbx");
+    Model glass("res/objects/ICTC/ictc_glass.fbx");
+
+    Shader lightingShader("res/shaders/lightingMap.glsl");
     lightingShader.Bind();
     lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f));
     lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f));
@@ -144,12 +172,6 @@ int main()
     lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
     lightingShader.SetUniform("u_Model", lightingModelMatrix);
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
-
-    // model Loading
-    Model glass("res/objects/ICTC/ictc_glass.fbx");
-    Model home("res/objects/ICTC/ictc.fbx");
-    Model room("res/objects/ICTC/ICTCRoom.fbx");
-
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -175,13 +197,9 @@ int main()
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
 
-        
-        glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
-    lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
-    lightingShader.SetUniform("u_Model", lightingModelMatrix);
         home.Draw(lightingShader);
         room.Draw(lightingShader);
-glass.Draw(lightingShader);
+        glass.Draw(lightingShader);
 
         // also draw the lamp object
         lampShader.Bind();
@@ -189,6 +207,12 @@ glass.Draw(lightingShader);
         lampShader.SetUniform("u_View", lookAt);
 
         Renderer::Draw(va, ib);
+
+        planeShader.Bind();
+        planeShader.SetUniform("u_Projection", projection);
+        planeShader.SetUniform("u_View", lookAt);
+
+        Renderer::Draw(planeVA, planeIB);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
