@@ -12,7 +12,7 @@
 #include "Model.hpp"
 
 // Position of light source
-#define LIGHT_POS glm::vec3(1.2f, 1.0f, 2.0f)
+#define LIGHT_POS glm::vec3(17.2f, 20.0f, 2.0f)
 
 int main()
 {
@@ -161,12 +161,13 @@ int main()
 
     Shader lightingShader("res/shaders/lightingMap.glsl");
     lightingShader.Bind();
+    lightingShader.SetUniform("u_Light.position", LIGHT_POS);
     lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f));
     lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f));
     lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f));
-    lightingShader.SetUniform("u_Light.constant", .1f);
-    lightingShader.SetUniform("u_Light.linear", 0.02f);
-    lightingShader.SetUniform("u_Light.quadratic", 0.013f);
+    lightingShader.SetUniform("u_Light.constant", .01f);
+    lightingShader.SetUniform("u_Light.linear", 0.002f);
+    lightingShader.SetUniform("u_Light.quadratic", 0.0013f);
 
     glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
     lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
@@ -190,7 +191,6 @@ int main()
         // projection transformation
         const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
-        lightingShader.SetUniform("u_Light.position", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_View", lookAt);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
