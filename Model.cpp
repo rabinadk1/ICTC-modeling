@@ -12,7 +12,7 @@ Model::Model(const std::string &path)
   // read file via ASSIMP
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(
-      path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenNormals);
+      path, aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices);
 
   // check for errors
   if (!scene or scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE or !scene->mRootNode)
@@ -95,10 +95,8 @@ void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
   }
 
   //process materials
-  if (mesh->mMaterialIndex >= 0)
-  {
-    const aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-    /*
+  const aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+  /*
     we assume a convention for sampler names in the shaders. Each diffuse texture should be named
     as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
     Same applies to other texture as the following list summarizes:
@@ -107,19 +105,18 @@ void Model::ProcessMesh(const aiMesh *mesh, const aiScene *scene)
     normal: texture_normalN
     */
 
-    //Diffuse Maps
-    LoadMaterialTextures(material, textures, aiTextureType_DIFFUSE, "diffuse");
+  //Diffuse Maps
+  LoadMaterialTextures(material, textures, aiTextureType_DIFFUSE, "diffuse");
 
-    // Specular Maps
-    LoadMaterialTextures(material, textures, aiTextureType_SPECULAR, "specular");
+  // Specular Maps
+  LoadMaterialTextures(material, textures, aiTextureType_SPECULAR, "specular");
 
-    // Normal maps
-    LoadMaterialTextures(material, textures, aiTextureType_HEIGHT, "normal");
+  // Normal maps
+  // LoadMaterialTextures(material, textures, aiTextureType_HEIGHT, "normal");
 
-    // Height maps
-    LoadMaterialTextures(material, textures, aiTextureType_AMBIENT, "height");
-    // textures.insert(textures.end(), lightingMaps.begin(), lightingMaps.end());
-  }
+  // Height maps
+  // LoadMaterialTextures(material, textures, aiTextureType_AMBIENT, "height");
+
   // return a mesh object created from the extracted mesh data
   m_Meshes.emplace_back(vertices, indices, m_TexturesLoaded, textures);
 }

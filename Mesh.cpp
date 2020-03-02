@@ -45,8 +45,6 @@ void Mesh::Draw(Shader &shader) const
   // bind appropriate textures
   uint diffuseNr = 1;
   uint specularNr = 1;
-  uint normalNr = 1;
-  uint heightNr = 1;
 
   for (uint i = 0; i < m_Textures.size(); ++i)
   {
@@ -59,10 +57,6 @@ void Mesh::Draw(Shader &shader) const
       number = std::to_string(diffuseNr++);
     else if (textureType == "specular")
       number = std::to_string(specularNr++); // transfer unsigned int to stream
-    // else if (textureType == "normal")
-    //   number = std::to_string(normalNr++); // transfer unsigned int to stream
-    // else if (textureType == "height")
-    //   number = std::to_string(heightNr++); // transfer unsigned int to stream
     else
       continue;
     shader.SetUniform(("u_Material." + textureType + number).c_str(), static_cast<int>(i));

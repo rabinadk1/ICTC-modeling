@@ -80,78 +80,65 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     const float vertices[] = {
-        // positions
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        // front
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        // back
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, 1.0, -1.0,
+        -1.0, 1.0, -1.0};
 
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
+    const uint indices[] = {
+        // front
+        0, 1, 2,
+        2, 3, 0,
+        // right
+        1, 5, 6,
+        6, 2, 1,
+        // back
+        7, 6, 5,
+        5, 4, 7,
+        // left
+        4, 0, 3,
+        3, 7, 4,
+        // bottom
+        4, 5, 1,
+        1, 0, 4,
+        // top
+        3, 2, 6,
+        6, 7, 3};
 
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f};
-
-    // Vertex Array Objects
-    // VertexArray cubeVAO;  // Cube VAO
-    VertexArray lightVAO; // Light Source VAO
+    const VertexArray va; // Light Source VAO
 
     // Vertex Buffer Object
-    VertexBuffer vb(vertices, sizeof(vertices));
+    const VertexBuffer vb(vertices, sizeof(vertices));
+
+    const IndexBuffer ib(indices, sizeof(indices) / sizeof(uint));
 
     // Specifying Layout
     VertexBufferLayout layout;
     // For vertex position
     layout.Push<float>(3);
-    lightVAO.AddBuffer(vb, layout);
+    va.AddBuffer(vb, layout);
 
-    Shader lightingShader("res/shaders/lighting.glsl");
+    Shader lightingShader("res/shaders/lightingMap.glsl");
     Shader lampShader("res/shaders/lamp.glsl");
 
     glm::mat4 lampModelMatrix = glm::translate(glm::mat4(1.f), LIGHT_POS);
-    lampModelMatrix = glm::scale(lampModelMatrix, glm::vec3(0.2f)); // a smaller cube
+    lampModelMatrix = glm::scale(lampModelMatrix, glm::vec3(0.1f)); // a smaller cube
     lampShader.Bind();
     lampShader.SetUniform("u_Model", lampModelMatrix);
 
     lightingShader.Bind();
-    lightingShader.SetUniform("u_Light.position", LIGHT_POS);
     lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f));
     lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f));
     lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f));
-    lightingShader.SetUniform("u_Light.constant", 1.0f);
-    lightingShader.SetUniform("u_Light.linear", 0.2f);
-    lightingShader.SetUniform("u_Light.quadratic", 0.073f);
+    lightingShader.SetUniform("u_Light.constant", .1f);
+    lightingShader.SetUniform("u_Light.linear", 0.02f);
+    lightingShader.SetUniform("u_Light.quadratic", 0.013f);
 
     glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
     lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
@@ -159,7 +146,9 @@ int main()
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
 
     // model Loading
-    Model modelObject("res/objects/ICTC/ICTC.obj");
+    Model glass("res/objects/ICTC/ictc_glass.fbx");
+    Model home("res/objects/ICTC/ictc.fbx");
+    Model room("res/objects/ICTC/ICTCRoom.fbx");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -169,44 +158,36 @@ int main()
         // To keep the background at a certain color
         // glClearColor(1, 0, 1, 1);
 
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_BACK);
+        // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // projection transformation
+        const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
-        lightingShader.SetUniform("u_Light.position", LIGHT_POS);
-        lightingShader.SetUniform("u_Light.direction", Renderer::camera.GetFront());
-        lightingShader.SetUniform("u_Light.cutoff", glm::cos(glm::radians(25.0f)));
-        lightingShader.SetUniform("u_Light.outerCutoff", glm::cos(glm::radians(35.0f)));
-
+        lightingShader.SetUniform("u_Light.position", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
-        lightingShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
-        lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-        lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f, 0.8f, 1.0f));
-        lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f, 1.0f, 0.8f));
-        lightingShader.SetUniform("u_Light.constant", 1.0f);
-        lightingShader.SetUniform("u_Light.linear", 0.09f);
-        lightingShader.SetUniform("u_Light.quadratic", 0.0032f);
-        glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
-                                                static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
+        lightingShader.SetUniform("u_View", lookAt);
+        const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
+                                                      static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
 
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
-        lightingShader.SetUniform("u_Model", modelMatrix);
-        lightingShader.SetUniform("u_Material.shininess", 0.2f * 128.0f);
-        lightingShader.SetUniform("u_Material.ambient", glm::vec3(0.2125f, 0.1275f, 0.054f));
-        lightingShader.SetUniform("u_Material.diffuse", glm::vec3(0.714f, 0.4284f, 0.18144f));
-        lightingShader.SetUniform("u_Material.specular", glm::vec3(0.393548f, 0.271906f, 0.166721f));
-
-        modelObject.Draw(lightingShader);
+        glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
+        lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
+        lightingShader.SetUniform("u_Model", lightingModelMatrix);
+        home.Draw(lightingShader);
+        room.Draw(lightingShader);
+        glass.Draw(lightingShader);
 
         // also draw the lamp object
         lampShader.Bind();
 
         lampShader.SetUniform("u_Projection", projection);
-        lampShader.SetUniform("u_View", Renderer::camera.GetViewMatrix());
+        lampShader.SetUniform("u_View", lookAt);
 
-        Renderer::Draw(lightVAO, 36);
+        Renderer::Draw(va, ib);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

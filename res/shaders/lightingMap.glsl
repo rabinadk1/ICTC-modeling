@@ -25,10 +25,10 @@ in vec2 TexCoords;
 out vec4 FragColor;
 
 struct Material {
-    // sampler2D diffuse1;
-    sampler2D diffuse;
-    sampler2D specular;
-    // sampler2D specular2;
+    sampler2D diffuse1;
+    sampler2D diffuse2;
+    sampler2D specular1;
+    sampler2D specular2;
     float shininess;
 };
 
@@ -52,8 +52,8 @@ uniform vec3 u_ViewPos;
 
 void main()
 {
-    vec4 col_diffuse_1 = texture(u_Material.diffuse, TexCoords);
-    vec4 col_diffuse_2 = texture(u_Material.diffuse, TexCoords);
+    vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
+    vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
     vec4 material_diffuse =  0.5 * col_diffuse_1 + 0.5 * col_diffuse_2;
     // ambient lighting 
     vec3 ambient = u_Light.ambient * material_diffuse.rgb;
@@ -65,8 +65,8 @@ void main()
     vec3 diffuse = u_Light.diffuse * diff * material_diffuse.rgb;
 
     // specular lighting
-    vec4 col_specular_1 = texture(u_Material.specular, TexCoords);
-    vec4 col_specular_2 = texture(u_Material.specular, TexCoords);
+    vec4 col_specular_1 = texture(u_Material.specular1, TexCoords);
+    vec4 col_specular_2 = texture(u_Material.specular2, TexCoords);
     vec4 material_specular = col_specular_1 * col_specular_2;
 
     vec3 viewDir = normalize(u_ViewPos-FragPos);
@@ -80,5 +80,5 @@ void main()
                                 u_Light.quadratic * (distance * distance));
 
     const vec3 result = ((ambient*attenuation)+(diffuse*attenuation)+(specular*attenuation));
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, col_diffuse_2.w);
 }
