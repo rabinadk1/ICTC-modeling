@@ -209,7 +209,7 @@ int main()
         processInput(window);
 
         // To keep the background at a certain color
-        glClearColor(1, 0, 1, 1);
+        glClearColor(0.539f, 0.808f, 0.922f, 1.f);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

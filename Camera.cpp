@@ -47,8 +47,8 @@ void Camera::ProcessKeyboard(const CameraMovement &direction, float deltaTime)
   default:
     m_Position -= m_Up * velocity;
   }
-  if (m_Position.y <= PLANE_Y)
-    m_Position.y = PLANE_Y;
+  // if (m_Position.y <= PLANE_Y)
+  //   m_Position.y = PLANE_Y;
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)

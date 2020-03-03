@@ -31,5 +31,16 @@ public:
     // set depth function back to default
     glDepthFunc(GL_LESS);
   }
-  inline void Unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
+
+  void Draw(const VertexArray &va, uint count, uint slot = 0) const
+  {
+    // change depth function so depth test passes when values are equal to depth buffer's content
+    glDepthFunc(GL_LEQUAL);
+    Bind(slot);
+    Renderer::Draw(va, count);
+    // set depth function back to default
+    glDepthFunc(GL_LESS);
+  }
+
+  inline void Unbind() const { glBindTexture(GL_TEXTURE_CUBE_MAP, 0); }
 };
