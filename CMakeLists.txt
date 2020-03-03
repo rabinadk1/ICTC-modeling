@@ -10,7 +10,7 @@ else()
   add_compile_options(-Wall -Wextra -Wpedantic -Weffc++)
 endif()
 
-add_executable(learnopengl main.cpp IndexBuffer.cpp VertexBuffer.cpp VertexArray.cpp Shader.cpp Renderer.cpp Texture.cpp Camera.cpp Mesh.cpp Model.cpp stb_image.cpp)
+add_executable(learnopengl main.cpp IndexBuffer.cpp VertexBuffer.cpp VertexArray.cpp Shader.cpp Renderer.cpp Texture.cpp Camera.cpp Mesh.cpp Model.cpp CubeMap.cpp stb_image.cpp)
 target_include_directories(learnopengl PRIVATE includes)
 target_link_libraries(learnopengl PRIVATE GLEW glfw GL X11 dl assimp)
 target_compile_features(learnopengl PRIVATE cxx_auto_type)

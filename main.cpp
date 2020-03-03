@@ -8,8 +8,8 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
-#include "Camera.hpp"
 #include "Model.hpp"
+#include "CubeMap.hpp"
 
 // Position of light source
 #define LIGHT_POS glm::vec3(17.2f, 20.0f, 2.0f)
@@ -190,6 +190,19 @@ int main()
 
     // Renderer::EnableCullFace();
 
+    // NOTE: For SkyBox
+    const CubeMap skyBox(std::vector<std::string>{
+        "res/skybox/right.jpg",
+        "res/skybox/left.jpg",
+        "res/skybox/top.jpg",
+        "res/skybox/bottom.jpg",
+        "res/skybox/front.jpg",
+        "res/skybox/back.jpg"});
+
+    Shader skyBoxShader("res/shaders/cubeMap.glsl");
+    skyBoxShader.Bind();
+    skyBoxShader.SetUniform("u_CubeMap", 0);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -201,11 +214,11 @@ int main()
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // projection transformation
-        const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
+        const glm::mat4 view = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
         lightingShader.SetUniform("u_Model", lightingModelMatrix);
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
-        lightingShader.SetUniform("u_View", lookAt);
+        lightingShader.SetUniform("u_View", view);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
         lightingShader.SetUniform("u_Projection", projection);
@@ -222,16 +235,23 @@ int main()
         // also draw the lamp object
         lampShader.Bind();
         lampShader.SetUniform("u_Projection", projection);
-        lampShader.SetUniform("u_View", lookAt);
+        lampShader.SetUniform("u_View", view);
 
         Renderer::Draw(va, ib);
 
         planeShader.Bind();
         planeShader.SetUniform("u_Projection", projection);
-        planeShader.SetUniform("u_View", lookAt);
+        planeShader.SetUniform("u_View", view);
 
         planeTexture.Bind();
         Renderer::Draw(planeVA, planeIB);
+
+        // !NOTE: Draw skyBox at Last
+        skyBoxShader.Bind();
+        // remove translation from the view matrix
+        skyBoxShader.SetUniform("u_View", glm::mat4(glm::mat3(view)));
+        skyBoxShader.SetUniform("u_Projection", projection);
+        skyBox.Draw(va, ib);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
