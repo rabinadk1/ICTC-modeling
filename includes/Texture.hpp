@@ -7,9 +7,7 @@ class Texture
 {
 private:
   unsigned int m_RendererID;
-  std::string m_Filepath;
-  int m_Width, m_Height, m_ChannelNumber;
-  std::string m_Type;
+  const std::string m_Type;
 
 public:
   Texture(const std::string &path, const char *type = "default");
