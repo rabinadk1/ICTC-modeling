@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 
+#define PLANE_Y -1.f
+
 Camera::Camera(const glm::vec3 &position, const glm::vec3 &up, float yaw, float pitch)
     : m_Position(position),
       m_Up(up),
@@ -45,6 +47,8 @@ void Camera::ProcessKeyboard(const CameraMovement &direction, float deltaTime)
   default:
     m_Position -= m_Up * velocity;
   }
+  if (m_Position.y <= PLANE_Y)
+    m_Position.y = PLANE_Y;
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
