@@ -28,6 +28,13 @@ struct Renderer
         va.Bind();
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);
     }
+
+    static void EnableCullFace()
+    {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 };
 
 // Callback function for printing debug statements
