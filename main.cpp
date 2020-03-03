@@ -165,6 +165,8 @@ int main()
     // model Loading
     Model home("res/objects/ICTC/ictc.fbx");
     Model room("res/objects/ICTC/ICTCRoom.fbx");
+    Model clock("res/objects/ICTC/ICTCClock.fbx");
+    Model writing("res/objects/ICTC/ICTCWrite.fbx");
     Model glass("res/objects/ICTC/ictc_glass.fbx");
 
     Model car("res/objects/car/Lamborghini_Aventador.fbx");
@@ -210,6 +212,8 @@ int main()
 
         home.Draw(lightingShader);
         room.Draw(lightingShader);
+        clock.Draw(lightingShader);
+        writing.Draw(lightingShader);
         glass.Draw(lightingShader);
 
         lightingShader.SetUniform("u_Model", carModelMatrix);
