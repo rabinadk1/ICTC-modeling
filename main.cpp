@@ -80,10 +80,11 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     const float planeVertices[] = {
-        -1, 0, -1,
-        1, 0, -1,
-        1, 0, 1,
-        -1, 0, 1};
+        // positions  //texture coordinates
+        -1, 0, -1, 0, 1,
+        1, 0, -1, 1, 1,
+        1, 0, 1, 1, 0,
+        -1, 0, 1, 0, 0};
 
     const uint planeIndices[] = {
         0, 1, 2,
@@ -94,14 +95,22 @@ int main()
     const IndexBuffer planeIB(planeIndices, sizeof(planeIndices) / sizeof(uint));
 
     VertexBufferLayout planeLayout;
+    // positions
     planeLayout.Push<float>(3);
+    // texture coordinates
+    planeLayout.Push<float>(2);
 
     planeVA.AddBuffer(planeVB, planeLayout);
-    Shader planeShader("res/shaders/lamp.glsl");
+
+    Shader planeShader("res/shaders/renderTexture.glsl");
     glm::mat4 planeModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(10.f, -1.75f, 0.f));
     planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(100.f));
     planeShader.Bind();
     planeShader.SetUniform("u_Model", planeModelMatrix);
+
+    Texture planeTexture("res/images/groundTexture.png");
+    planeTexture.Bind();
+    planeShader.SetUniform("u_Texture", 0);
 
     const float vertices[] = {
         // front
@@ -157,6 +166,7 @@ int main()
     // model Loading
     Model home("res/objects/ICTC/ictc.fbx");
     Model room("res/objects/ICTC/ICTCRoom.fbx");
+    Model car("res/objects/car/Lamborghini_Aventador.fbx");
     Model glass("res/objects/ICTC/ictc_glass.fbx");
 
     Shader lightingShader("res/shaders/lightingMap.glsl");
@@ -169,10 +179,13 @@ int main()
     lightingShader.SetUniform("u_Light.linear", 0.002f);
     lightingShader.SetUniform("u_Light.quadratic", 0.0013f);
 
-    glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
-    lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(0.2f));
-    lightingShader.SetUniform("u_Model", lightingModelMatrix);
     lightingShader.SetUniform("u_Material.shininess", 128.0f);
+
+    glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
+    // lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(2.f));
+
+    glm::mat4 carModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(7.f, -1.75f, 5.f));
+    carModelMatrix = glm::scale(carModelMatrix, glm::vec3(0.01f));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -191,6 +204,7 @@ int main()
         // projection transformation
         const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
         lightingShader.Bind();
+        lightingShader.SetUniform("u_Model", lightingModelMatrix);
         lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
         lightingShader.SetUniform("u_View", lookAt);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
@@ -200,6 +214,9 @@ int main()
         home.Draw(lightingShader);
         room.Draw(lightingShader);
         glass.Draw(lightingShader);
+
+        lightingShader.SetUniform("u_Model", carModelMatrix);
+        car.Draw(lightingShader);
 
         // also draw the lamp object
         lampShader.Bind();
@@ -212,6 +229,7 @@ int main()
         planeShader.SetUniform("u_Projection", projection);
         planeShader.SetUniform("u_View", lookAt);
 
+        planeTexture.Bind();
         Renderer::Draw(planeVA, planeIB);
 
         /* Swap front and back buffers */

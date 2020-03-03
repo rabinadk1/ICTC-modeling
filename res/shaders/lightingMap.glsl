@@ -54,7 +54,7 @@ void main()
 {
     const vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
     const vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
-    const vec4 material_diffuse =  0.5 * col_diffuse_1 + 0.5 * col_diffuse_2;
+    const vec4 material_diffuse =  mix(col_diffuse_1, col_diffuse_2, 0.5);
     const vec3 ambient = u_Light.ambient * material_diffuse.rgb;
 
     const vec3 lightDir = normalize(u_Light.position-FragPos);

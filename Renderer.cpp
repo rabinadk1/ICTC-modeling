@@ -5,7 +5,7 @@ int Renderer::w_width = 1072;
 int Renderer::w_height = 804;
 
 // Camera
-Camera Renderer::camera = Camera(glm::vec3(0.f, 0.f, 3.0f));
+Camera Renderer::camera = Camera(glm::vec3(0.f, 0.f, 30.0f));
 
 // Callback function for printing debug statements
 void GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
