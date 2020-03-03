@@ -173,16 +173,15 @@ int main()
 
     Shader lightingShader("res/shaders/lightingMap.glsl");
     lightingShader.Bind();
-    lightingShader.SetUniform("u_Light.position", LIGHT_POS);
-    lightingShader.SetUniform("u_Light.ambient", glm::vec3(0.2f));
-    lightingShader.SetUniform("u_Light.diffuse", glm::vec3(0.8f));
-    lightingShader.SetUniform("u_Light.specular", glm::vec3(1.0f));
-    lightingShader.SetUniform("u_Light.constant", .01f);
-    lightingShader.SetUniform("u_Light.linear", 0.002f);
-    lightingShader.SetUniform("u_Light.quadratic", 0.0013f);
-    lightingShader.SetUniform("u_Material.shininess", 128.0f);
+    // directional light
+    lightingShader.SetUniform("u_DirLight.direction", -54.2f, 43.0f, -51.3f);
+    lightingShader.SetUniform("u_DirLight.ambient", 0.6f, 0.64f, 0.62f);
+    lightingShader.SetUniform("u_DirLight.diffuse", 0.86f, 0.71f, 0.64f);
+    lightingShader.SetUniform("u_DirLight.specular", 0.8f, 0.8f, 0.8f);
 
-    glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, -1.75f, 0.f));
+    lightingShader.SetUniform("u_Material.shininess", 2.0f);
+
+    glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, -1.75f, 0.f));
     // lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(2.f));
 
     glm::mat4 carModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(7.f, -1.75f, 5.f));
@@ -196,35 +195,14 @@ int main()
         processInput(window);
 
         // To keep the background at a certain color
-        glClearColor(1, 0, 1, 1);
+        glClearColor(0.5, 0.85, 0.92, 0.8);
 
         Renderer::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // projection transformation
         const glm::mat4 lookAt = Renderer::camera.GetViewMatrix();
-        lightingShader.Bind();
-        lightingShader.SetUniform("u_Model", lightingModelMatrix);
-        lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
-        lightingShader.SetUniform("u_View", lookAt);
         const glm::mat4 projection = glm::perspective(glm::radians(Renderer::camera.GetFOV()),
                                                       static_cast<float>(Renderer::w_width) / Renderer::w_height, 0.1f, 100.f);
-        lightingShader.SetUniform("u_Projection", projection);
-
-        home.Draw(lightingShader);
-        room.Draw(lightingShader);
-        clock.Draw(lightingShader);
-        writing.Draw(lightingShader);
-        glass.Draw(lightingShader);
-
-        lightingShader.SetUniform("u_Model", carModelMatrix);
-        car.Draw(lightingShader);
-
-        // also draw the lamp object
-        lampShader.Bind();
-        lampShader.SetUniform("u_Projection", projection);
-        lampShader.SetUniform("u_View", lookAt);
-
-        Renderer::Draw(va, ib);
 
         planeShader.Bind();
         planeShader.SetUniform("u_Projection", projection);
@@ -232,6 +210,24 @@ int main()
 
         planeTexture.Bind();
         Renderer::Draw(planeVA, planeIB);
+
+        lightingShader.Bind();
+        lightingShader.SetUniform("u_Model", lightingModelMatrix);
+        lightingShader.SetUniform("u_ViewPos", Renderer::camera.GetPosition());
+        lightingShader.SetUniform("u_View", lookAt);
+        lightingShader.SetUniform("u_Projection", projection);
+
+        home.Draw(lightingShader);
+        room.Draw(lightingShader);
+        clock.Draw(lightingShader);
+        writing.Draw(lightingShader);
+
+        lightingShader.SetUniform("u_Model", carModelMatrix);
+        car.Draw(lightingShader);
+
+        lightingShader.SetUniform("u_Model", lightingModelMatrix);
+
+        glass.Draw(lightingShader);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

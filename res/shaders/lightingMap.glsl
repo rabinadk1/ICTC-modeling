@@ -32,49 +32,64 @@ struct Material {
     float shininess;
 };
 
-struct Light {
-    vec3 position;
+// struct for directional light(like the sun)
+struct DirLight {
+    vec3 direction;
+
+    // light properties
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-
-    // attenuation variables
-    float constant;
-    float linear;
-    float quadratic;
-
 };
 
-
 uniform Material u_Material;
-uniform Light u_Light;
+uniform DirLight u_DirLight;
 uniform vec3 u_ViewPos;
+
+vec4 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 
 void main()
 {
+    vec3 viewDir = normalize(u_ViewPos - FragPos);
+
+    // directional lighting
+    vec4 result = CalcDirLight(u_DirLight, normal, viewDir);
+
+    FragColor = result;
+}
+
+
+vec4 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+{
+    /*
+    We use Phong Shading Model to calculate the 
+    illumination of the fragments
+    */
+
+    // for material diffuse property
     const vec4 col_diffuse_1 = texture(u_Material.diffuse1, TexCoords);
     const vec4 col_diffuse_2 = texture(u_Material.diffuse2, TexCoords);
     const vec4 material_diffuse =  mix(col_diffuse_1, col_diffuse_2, 0.5);
-    const vec3 ambient = u_Light.ambient * material_diffuse.rgb;
 
-    const vec3 lightDir = normalize(u_Light.position-FragPos);
-    const float diff = max(dot(normal, lightDir), 0.0);
-    const vec3 diffuse = diff * u_Light.diffuse * material_diffuse.rgb;
-
+    // for material specular property
     const vec4 col_specular_1 = texture(u_Material.specular1, TexCoords);
     const vec4 col_specular_2 = texture(u_Material.specular2, TexCoords);
     const vec4 material_specular = col_specular_1 * col_specular_2;
 
-    const vec3 viewDir = normalize(u_ViewPos-FragPos);
+    const vec3 lightDir = normalize(-light.direction);
+    // diffuse shading constant
+    const float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading constant
     const vec3 reflectDir = reflect(-lightDir, normal);
     const float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
-    const vec3 specular = spec * u_Light.specular * material_specular.rgb;
 
-    // for light attenuation
-    const float distance = length(u_Light.position - FragPos);
-    const float attenuation = 1.0 / (u_Light.constant + u_Light.linear * distance +
-                                u_Light.quadratic * (distance * distance));
+    // combine ambient, diffuse and specular shading (phong model)
 
-    const vec3 result = ((ambient*attenuation)+(diffuse*attenuation)+(specular*attenuation));
-    FragColor = vec4(result, col_diffuse_2.w);
+    const vec3 ambient = light.ambient * material_diffuse.rgb;
+    const vec3 diffuse = light.diffuse * diff * material_diffuse.rgb;
+    const vec3 specular = light.specular * spec * material_specular.rgb;
+
+    // return the combined effect of all shading
+    // for directional lighting
+    return vec4((ambient + diffuse + specular), material_diffuse.w);
 }

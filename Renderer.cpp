@@ -5,7 +5,7 @@ int Renderer::w_width = 1072;
 int Renderer::w_height = 804;
 
 // Camera
-Camera Renderer::camera = Camera(glm::vec3(0.f, 0.f, 30.0f));
+Camera Renderer::camera = Camera(glm::vec3(54.f, -1.f, 1.0f));
 
 // Callback function for printing debug statements
 void GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
@@ -119,6 +119,8 @@ void processInput(GLFWwindow *window)
     const float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrame;
     lastFrame = currentTime;
+    // std::cout << "Current Position: "
+    //           << "(" << Renderer::camera.GetPosition().x << "," << Renderer::camera.GetPosition().y << "," << Renderer::camera.GetPosition().z << ")" << std::endl;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
