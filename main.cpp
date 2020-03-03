@@ -174,12 +174,12 @@ int main()
     Shader lightingShader("res/shaders/lightingMap.glsl");
     lightingShader.Bind();
     // directional light
-    lightingShader.SetUniform("u_DirLight.direction", -54.2f, 43.0f, -51.3f);
-    lightingShader.SetUniform("u_DirLight.ambient", 0.6f, 0.64f, 0.62f);
-    lightingShader.SetUniform("u_DirLight.diffuse", 0.86f, 0.71f, 0.64f);
-    lightingShader.SetUniform("u_DirLight.specular", 0.8f, 0.8f, 0.8f);
+    lightingShader.SetUniform("u_DirLight.direction", -24.2f, -10.0f, 7.3f);
+    lightingShader.SetUniform("u_DirLight.ambient", 0.2314f, 0.0588f, 0.0157f);
+    lightingShader.SetUniform("u_DirLight.diffuse", 0.9554f, 0.7122f, 0.8667f);
+    lightingShader.SetUniform("u_DirLight.specular", 0.9223f, 0.8122f, 0.7584f);
 
-    lightingShader.SetUniform("u_Material.shininess", 2.0f);
+    lightingShader.SetUniform("u_Material.shininess", 128.0f);
 
     glm::mat4 lightingModelMatrix = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, -1.75f, 0.f));
     // lightingModelMatrix = glm::scale(lightingModelMatrix, glm::vec3(2.f));
