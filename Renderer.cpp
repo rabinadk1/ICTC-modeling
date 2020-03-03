@@ -1,11 +1,11 @@
 #include "Renderer.hpp"
 
 // Changed by resizing
-int Renderer::w_width = 1072;
-int Renderer::w_height = 804;
+int Renderer::w_width = 1366;
+int Renderer::w_height = 768;
 
 // Camera
-Camera Renderer::camera = Camera(glm::vec3(0.f, 0.f, 30.0f));
+Camera Renderer::camera = Camera(glm::vec3(31.1f, -.3f, -9.4f), glm::vec3(0.0f, 1.0f, 0.0f), -200.f, 10.f);
 
 // Callback function for printing debug statements
 void GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
