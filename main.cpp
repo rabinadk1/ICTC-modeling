@@ -227,7 +227,6 @@ int main()
         room.Draw(lightingShader);
         clock.Draw(lightingShader);
         writing.Draw(lightingShader);
-        glass.Draw(lightingShader);
 
         lightingShader.SetUniform("u_Model", carModelMatrix);
         car.Draw(lightingShader);
@@ -236,13 +235,11 @@ int main()
         lampShader.Bind();
         lampShader.SetUniform("u_Projection", projection);
         lampShader.SetUniform("u_View", view);
-
         Renderer::Draw(va, ib);
 
         planeShader.Bind();
         planeShader.SetUniform("u_Projection", projection);
         planeShader.SetUniform("u_View", view);
-
         planeTexture.Bind();
         Renderer::Draw(planeVA, planeIB);
 
@@ -252,6 +249,10 @@ int main()
         skyBoxShader.SetUniform("u_View", glm::mat4(glm::mat3(view)));
         skyBoxShader.SetUniform("u_Projection", projection);
         skyBox.Draw(va, ib);
+
+        lightingShader.Bind();
+        lightingShader.SetUniform("u_Model", lightingModelMatrix);
+        glass.Draw(lightingShader);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
