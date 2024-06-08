@@ -7,7 +7,11 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-add_compile_options(-Wall -Wextra -Wpedantic -Weffc++)
+if(MSVC)
+  add_compile_options(/W4)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic -Weffc++)
+endif()
 
 
 file(GLOB src_files CONFIGURE_DEPENDS "*.cpp")
